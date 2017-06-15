@@ -1,0 +1,40 @@
+<div>
+    <section>
+        <div data-bind="with: request">
+            <div>
+                <span>First Name</span><span data-bind="value: firstName" type="text"></span>
+            </div>
+            <div>
+                <span>Last Name</span><input data-bind="text: lastName" type="text"></input>
+            </div>
+            <div>
+                <span>Official</span><input data-bind="textInput: official" type="text"></input>
+            </div>
+            <div>
+                <span>Agency</span><input data-bind="textInput: agency" type="text"></input>
+            </div>
+            <div>
+                <span>Item</span><input data-bind="textInput: item" type="text"></input>
+            </div>
+            <div>
+                <span>Stance</span><input data-bind="textInput: stance" type="text"></input>
+            </div>
+            <div>
+                <span>Notes</span><input data-bind="textInput: notes" type="text"></input>
+            </div>
+            <div>
+                <span>Email</span><input data-bind="textInput: email" type="text"></input>
+            </div>
+            <div>
+                <span>Address</span><input data-bind="textInput: address" type="text"></input>
+            </div>
+            <div>
+                <span>Phone</span><input data-bind="textInput: phone" type="text"></input>
+            </div>
+        </div>
+        <div>
+            <button data-bind="click: function () { save(); }">Save</button>
+            <button data-bind="click: function () { closeDialog(); }">Cancel</button>
+        </div>
+    </section>
+</div>

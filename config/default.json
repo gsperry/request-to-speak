@@ -8,6 +8,35 @@
             "user": "sql-rtswebservice",
             "password": "stored locally",
             "port": 1433
+        },
+        "log": {
+            "level": "debug",
+            "levels": {
+                "fatal": 0,
+                "error": 1,
+                "warn": 2,
+                "info": 3,
+                "debug": 4,
+                "trace": 5
+            },
+            "colors": {
+                "fatal": "red",
+                "error": "red",
+                "warn": "yellow",
+                "info": "white",
+                "debug": "green",
+                "trace": "blue"
+            }
+        }
+    },
+    "SIRE": {
+        "dbApi": "./app/sire-js-api",
+        "dbConfig": {
+            "server": "crane.saccounty.net",
+            "database": "SIRE",
+            "user": "sql-rtswebservice",
+            "password": "stored locally",
+            "port": 1433
         }
     }
 }

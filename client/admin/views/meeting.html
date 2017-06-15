@@ -1,4 +1,9 @@
 <section>
     <h2 data-bind="text: displayName"></h2>
-    <button data-bind="click: startMeeting">start meeting</button>
+    <div data-bind="foreach: meetings">
+        <span data-bind="text: meetingName, click: $parent.selectMeeting"></span>
+    </div>
+    <button data-bind="click: startMeeting, enable: selectedMeeting !== null">start meeting</button>
+    <button data-bind="click: importMeeting">import meeting</button>
+    <button data-bind="click: saveMeeting, enable: selectedMeeting !== null">save meeting</button>
 </section>

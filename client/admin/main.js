@@ -8,7 +8,9 @@ requirejs.config({
         "knockout": "../lib/knockout/knockout-3.4.0",
         "bootstrap": "../lib/bootstrap/js/bootstrap",
         "jquery": "../lib/jquery/jquery-1.9.1",
-        "primus": "../primus/primus"
+        "primus": "../primus/primus",
+        "eventHandler": "../lib/rts/eventHandler",
+        "dialog": "./viewmodels/dialog"
     },
     shim: {
         "bootstrap": {
@@ -23,7 +25,7 @@ define(["durandal/system", "durandal/app", "durandal/viewLocator", "bootstrap"],
     system.debug(true);
     // >>excludeEnd("build");
 
-    app.title = "Durandal Starter Kit";
+    app.title = "Request To Speak";
 
     app.configurePlugins({
         router: true,

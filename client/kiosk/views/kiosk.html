@@ -1,21 +1,141 @@
-<section>
-    <div data-bind="visible: isMeetingActive">
-        <div class="row" data-bind="foreach: messages">
-            <div class="col-sm-6 col-md-3">
-                <span data-bind="text: message">
-                </span>
-            </div>
-        </div>
-        <div>
-            <select data-bind="options: meeting.items,
-            optionsText: 'itemName',
-            value: selectedItem,"></select>
-        </div>
-        <div>
-            <button data-bind="click: submitRequest, enable: isMeetingActive">submit</input>
-        </div>
-    </div>
-    <div data-bind="visible: !isKioskConnected">
-        <span>Please stand by. Server connection disrupted.</span>
-    </div>
-</section>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title>Saccounty RTS Kiosk</title>
+		<link rel="stylesheet" type="text/css" href="css/normalize.css" />	
+		<link rel="stylesheet" type="text/css" href="css/ipad.css" />
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+	</head>
+	<body>
+		<div class="container"> 
+			<div class="fs-form-wrap" id="fs-form-wrap">
+				<form data-bind="css: {fsFormOverview: step === 7, fsFormFull: step !== 7}" id="myform" class="fs-form" autocomplete="off">
+					<ol data-bind="with: request" class="fs-fields">
+						<li data-bind="css: {fsCurrent: $parent.step === 0, fsStaleStart: $parent.step !== 0}">
+							<span class="fs-field-label ">What's your name?</span>
+							<input data-bind="value: name"  id="q1" name="q1" type="text" placeholder="First and Last" required/>
+						</li>
+						<li data-bind="css: {fsCurrent: $parent.step === 1, fsStale: $parent.step !== 1}">
+							<label for="q3" ><span class="fs-field-label ">Are you a: </span></label>
+							<div id="#constituants" class="fs-radio-group fs-radio-custom clearfix ">
+								<div class="">
+									<span><input data-bind="checked: official, click: $parent.nextStep" id="q3b" name="q3" type="radio" value="constituent" class="conRadio" /><label for="q3b" class="conLabel"><h2>Constituent</h2></label></span>
+									<span><p class="simplePtag">or</p></span>
+									<span><input data-bind="checked: official" id="q3a" name="q3" type="radio" value="official" class="officalRadio"/><label for="q3a" class="officialLabel"><h2>Active / Retired Official</h2></label>
+									</span>
+								</div>
+								<div data-bind="style: { display: official === 'official' ? 'block' : 'none' }" class="showInput" style="display: none">
+									<input type="text"  id="q3c" placeholder="Agency Name">
+								</div>
+							</div>		
+						</li>
+						<li data-bind="css: {fsCurrent: $parent.step === 2, fsStale: $parent.step !== 2}">
+							<div class="" id="subColumns">
+								<section >
+									<label for="q7"><span class="fs-field-label ">Which agenda item? </span></label>
+									<button data-bind="click: $parent.openItemSelector">Choose Item, click here</button>
+								</section>
+							</div>
+							<div class="clearfix"></div>
+							<div id="stance">
+								<label for="q10" ><span class="fs-field-label ">What's your stance?</span> </label>
+								<div class="fs-radio-group fs-radio-custom clearfix ">
+									<div class="">
+										<span><input data-bind="checked: stance" id="q10a" name="q10" type="radio" value="support" class="supportRadio" /><label for="q10a" ><h2>In-Support</h2></label></span>
+										<span><input data-bind="checked: stance" id="q10b" name="q10" type="radio" value="oppose" class="opposedRadio"/><label for="q10b" ><h2>Opposed</h2></label></span>
+										<span><input data-bind="checked: stance" id="q10c" name="q10" type="radio" value="neutral" class="neutralRadio"/><label for="q10c" ><h2>Neutral</h2></label></span>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li data-bind="css: {fsCurrent: $parent.step === 3, fsStale: $parent.step !== 3}">
+							<label for="q4"><span class="fs-field-label ">Any notes you would like to share?</span></label>
+							<textarea data-bind="textInput: notes"  id="q4" name="q4" placeholder="Describe here" maxlength="250"></textarea>
+							<div class=" countdown">
+								<span data-bind="text: $parent.notesCharsRemaining"></span> characters remaining
+							</div>
+						</li>
+						<li class="optional " data-bind="css: {fsCurrent: $parent.step === 4,  fsStale: $parent.step !== 4}">
+							<label for="q2" ><span class="fs-field-label ">What's your email address?</span></label>
+							<input data-bind="value: email" class=" " id="q2" name="q2" type="email" placeholder="your.email@saccounty.net" />
+						</li>
+						<li class="optional " data-bind="css: {fsCurrent: $parent.step === 5, fsStale: $parent.step !== 5}">
+							<label for="q8" ><span class="fs-field-label ">What's your home address?</span></label>
+							<input data-bind="value: address" class=" optional" id="q8" name="q8" type="text" placeholder="123 Awesome St., Sacramento, CA 95817"/>
+						</li>
+						<li class="optional " data-bind="css: {fsCurrent: $parent.step === 6, fsStale: $parent.step !== 6}">
+							<label for="q9" ><span class="fs-field-label ">What's your phone number?</span></label>
+							<input data-bind="value: phone" class=" optional" id="q9" name="q9" type="text" placeholder="916-123-4567" />
+						</li>
+				
+					</ol><!-- /fs-fields -->
+					
+					<div class="btns-top">
+						<button data-bind="click: submitRequest" class="fs-submit" type="button"><span class="btn-text">Send Now</span> <i class="fa fa-2x fa-check"></i></button>
+						<button type="button" class="fs-submit" ><span class="btn-text"> Cancel</span> <i class="fa fa-2x fa-ban"></i></button>
+
+						<button type="button" class="fs-submit" ><span class="btn-text"> Add Another</span> <i class="fa fa-2x fa-plus"></i></button>
+					</div>				
+					<div class="btns-start">
+						<button type="button" data-bind="click: prevStep,css: {hide: step === 7, fsStaleStart: step === 0}" class="fs-continue left">
+							<i class="fa fa-2x fa-angle-left"></i> <span class="btn-text-left">Last</span> 
+						</button>
+
+						<button type="button" data-bind="click: nextStep,css: {hide: step === 7}" class="fs-continue progress-button">
+							<span class="btn-text ">Next</span> <i class="fa fa-2x fa-angle-right"></i>
+						</button>
+					</div>	
+				</form><!-- /fs-form -->
+			</div><!-- /fs-form-wrap -->		
+		</div><!-- /container -->
+	
+		<div data-bind="style: { display: isMeetingActive === true ? 'none' : 'block' }" >
+		  <ul class="cb-slideshow">
+            <div><h3>There is currently <br> no active meeting.<br> Please check back soon.</h3></div>
+            <li><span></span></li>
+            <li><span></span></li>
+            <li><span></span></li>
+            <li><span></span></li>
+            <li><span></span></li>
+            <li><span></span></li>
+       	  </ul>
+		</div>
+		<div data-bind="style: { display: isConnected === true ? 'none' : 'block' }">
+		  <div class="glitch" role="document">
+				<span class="model-par">
+				Due to unexpected circumstances, this kiosk is temporarily out of service.<br> Please check back later.
+					<br>
+				Thank you.
+				</span>
+				<img class="hide" src="css/img/whitenoise-361x370-20.png"/>
+				<img class="hide" src="css/img/whitenoise-361x370.png"/>
+		  </div>
+		</div>
+		<div data-bind="style: { display: confirmSubmission === true ? 'block' : 'none' }" >
+		  <div class="successMesg" role="document">
+				<span class="model-par">
+				You have successfully submitted you information!
+					<br>
+				Thank you.
+				</span>
+		  </div>
+		</div>
+		<div data-bind="style: { display: itemSelector === true ? 'block' : 'none' }">
+			<div style="height:500px">
+				<div data-bind="visible: !showSubTopics">
+					<div data-bind="foreach: meeting.items">
+						<span data-bind="text: itemName, click: $root.selectItem"></span>
+					</div>
+				</div>
+				<div data-bind="visible: showSubTopics">
+					<div data-bind="foreach: selectedItem.subTopics">
+						<span data-bind="text: $data"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

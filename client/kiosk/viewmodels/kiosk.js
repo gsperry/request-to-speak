@@ -1,95 +1,80 @@
 /* eslint no-console: "off" */
-define(["plugins/http", "durandal/app", "plugins/observable", "primus"], function(http, app, observable, Primus) {
+define(["plugins/http", "durandal/app", "plugins/observable", "kioskDialog/items", "eventHandler", "jquery"],
+function(http, app, observable, Items, event, $) {
     var ret = {
+        isConnected: false,
+        isMeetingActive: false,
+        step: 0,
         request: {},
         meeting: {},
         selectedItem: {},
-
         isSubmitting: false,
-        isMeetingActive: false,
-        isKioskConnected: false,
-
+        confirmSubmission: false,
+        itemSelector: false,
+        showSubTopics: false,
         messages: [],
         primus: null,
-        activate: function() {
-            // the router's activator calls this function and waits for it to complete before proceeding
-            this.primus = new Primus(location.href.replace(location.hash, "") + "?clientType=kiosk");
-
-            this.primus.on("open", function() {
-                console.log("Connection established.");
-                this.isKioskConnected = true;
-            }.bind(this));
-            this.primus.on('reconnect timeout', function (err, opts) {
-                console.log('Timeout expired: %s', err.message);
-            }.bind(this));
-            this.primus.on('reconnect', function (err, opts) {
-                console.log('Reconnecting', err.message);
-                this.isKioskConnected = false;
-            }.bind(this));
-            this.primus.on('reconnected', function (err, opts) {
-                console.log('Reconnecting', err.message);
-                this.isKioskConnected = true;
-            }.bind(this));
-            this.primus.on("end", function() {
-                console.log("Connection ended.");
-                this.isKioskConnected = false;
-            }.bind(this));
-            this.primus.on("data", function(data) {
-                console.log(data);
-
-                this.messages.push({message: "Message received: " + data.messageType});
-                switch(data.messageType) {
-                case "meeting":
-                    if(data.message.event === "started") {
-                        this.applyMeetingData(data.message.meetingData);
-                    } else {
-                        this.endMeeting();
-                    }
-                    break;
-                case "initialize":
-                    this.applyMeetingData(data.message.meetingData);
-                    break;
-                }
-            }.bind(this));
+        attached: function() {
         },
-        applyMeetingData: function(meetingData) {
-            console.log("Intializing ");
-            if(meetingData.meetingId) {
+        deactivate: function() {
+            if(this.primus) {
+                this.primus.end();
+            }
+        },
+        activate: function() {
+            this.request = this.newRequest();
+            // the router's activator calls this function and waits for it to complete before proceeding
+            if(this.primus === null || this.primus.online !== true) {
+                event.setupPrimus(this, "kiosk");
+            }
+        },
+        meetingMessage: function(message) {
+            console.log("Meeting message");
+            if(message.event === "started") {
+                this.isMeetingActive = true;
+            } else {
+                this.isMeetingActive = false;
+            }
+            this.meeting = message.meetingData;
+            this.request = this.newRequest();
+        },
+        initializeMessage: function(message) {
+            console.log("Initializing kiosk");
+            this.meeting = message.meetingData;
+            if(message.meetingData.status === "started") {
                 this.isMeetingActive = true;
                 this.request = this.newRequest();
             } else {
                 this.isMeetingActive = false;
             }
-            this.meeting = meetingData;
         },
-        endMeeting: function() {
-            console.log("Meeting ended.");
-            this.isMeetingActive = false;
-            this.meeting = {};
-            this.request = {};
+        prevStep: function() {
+            this.step -= 1;
         },
         submitRequest: function() {
             this.isSubmitting = true;
             var self = this;
             http.post(location.href.replace(/[^/]*$/, "") + "request", this.request).then(function() {
                 self.isSubmitting = false;
-                self.confirmSubmission();
-            }, function() {
+                self.confirmSubmission = true;
+                setTimeout(function() {
+                    self.confirmSubmission = false;
+                    self.request = self.newRequest();
+                    self.step = 0;
+                }, 3000);
+            }, function(err) {
                 // do error stuff
+                console.log(err);
             });
         },
-        confirmSubmission: function() {
-            // show message for 3 seconds
-            this.request = this.newRequest();
-        },
         newRequest: function() {
-            return {
-                meetingId: this.meeting.meetingId,
+            var req = {
+                meetingId: this.meeting ? this.meeting.meetingId : "",
                 firstName: "",
                 lastName: "",
                 official: false,
                 agency: "",
-                item: "",
+                item: {},
                 offAgenda: false,
                 subTopic: "",
                 stance: "",
@@ -99,21 +84,65 @@ define(["plugins/http", "durandal/app", "plugins/observable", "primus"], functio
                 address: "",
                 timeToSpeak: 0
             };
+            observable.defineProperty(req, "name", {
+                read: function() {
+                    if(this.firstName !== "") {
+                        return this.firstName + " " + this.lastName;
+                    } else {
+                        return "";
+                    }
+                },
+                write: function(value) {
+                    var lastSpacePos = value.lastIndexOf(" ");
+                    if (lastSpacePos > 0) { // Ignore values with no space character
+                        this.firstName = value.substring(0, lastSpacePos); // Update "firstName"
+                        this.lastName = value.substring(lastSpacePos + 1); // Update "lastName"
+                    }
+                }
+            });
+            return req;
         },
         additionalRequest: function() {
-            this.request.item = "";
+            this.request.item = {};
             this.request.offAgenda = false;
             this.request.subTopic = "";
             this.request.stance = "";
             this.request.notes = "";
-        },
+        }
     };
-    observable(ret, 'selectedItem').subscribe(function(value){
+
+    ret.nextStep = function() {
+        this.step += 1;
+    }.bind(ret);
+
+    ret.openItemSelector = function() {
+        this.itemSelector = true;
+    }.bind(ret);
+
+    ret.selectItem = function(data) {
+        this.selectedItem = data;
+        if(this.selectedItem.subTopics) {
+            this.showSubTopics = true;
+        } else {
+            this.itemSelector = false;
+        }
+    }.bind(ret);
+
+    ret.selectItem = function(data) {
+        this.request.subTopic = data;
+        this.itemSelector = false;
+    }.bind(ret);
+
+    observable(ret, "selectedItem").subscribe(function(value) {
         if(value !== undefined) {
-            this.request.item = value.itemName;
+            this.request.item = value;
             this.request.timeToSpeak = value.defaultTimeToSpeak;
         }
     }.bind(ret));
+
+    observable.defineProperty(ret, "notesCharsRemaining", function() {
+        return 250 - this.request.notes.length;
+    });
 
     return ret;
 });

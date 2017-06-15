@@ -1,0 +1,14 @@
+<div style="background:white; width:300px">
+    <section>
+        <div data-bind="foreach: meetings">
+            <div data-bind="click: $parent.selectMeeting"> 
+                <span data-bind="text: meetingName"></span>
+                <span data-bind="text: meetingDate"></span>
+            </div>
+        </div>
+    </section>
+    <div>
+        <button data-bind="click: function () { confirmSelection(); }">Confirm</button>
+        <button data-bind="click: function () { closeDialog(); }">Cancel</button>
+    </div>
+</div>

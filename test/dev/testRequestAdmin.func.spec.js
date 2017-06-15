@@ -1,17 +1,19 @@
 /* global jasmine, describe, beforeEach, it, expect, require */
-define(["requestAdmin"], function(requestAdmin) {
+define(["requestAdmin"], function(RequestAdmin) {
     describe("Request Admin ViewModel functions.", function() {
         "use strict";
-        function requestAdminMeetingData() {
-            return {
-                wallConnected: true,
-                connectedAdmins: 1,
-                connectedKiosks: 1,
-                connectedBoards: 1
-            };
-        }
+        /**
+         * get test data
+         */
+        var testData = {
+            meeting: {},
+            wallConnected: true,
+            connectedAdmins: 1,
+            connectedKiosks: 1,
+            connectedBoards: 1
+        };
 
-        var a = requestAdmin;
+        var a = new RequestAdmin();
 
         describe("Request Admin functions.", function() {
             it("deviceMessage should activate or deactivate the wall for wall device type event.", function() {
@@ -61,6 +63,7 @@ define(["requestAdmin"], function(requestAdmin) {
                 expect(a.connectedAdmins).toBe(0);
                 expect(a.connectedBoards).toBe(0);
             });
+
             it("deviceMessage should set admin count for admin device type event.", function() {
                 expect(a.wallConnected).toBe(false);
                 expect(a.connectedKiosks).toBe(0);
@@ -85,6 +88,7 @@ define(["requestAdmin"], function(requestAdmin) {
                 expect(a.connectedAdmins).toBe(0);
                 expect(a.connectedBoards).toBe(0);
             });
+
             it("deviceMessage should set board count for board device type event.", function() {
                 expect(a.wallConnected).toBe(false);
                 expect(a.connectedKiosks).toBe(0);
@@ -109,12 +113,13 @@ define(["requestAdmin"], function(requestAdmin) {
                 expect(a.connectedAdmins).toBe(0);
                 expect(a.connectedBoards).toBe(0);
             });
-            it("applyData should set all counts and wall status.", function() {
+
+            it("initializeMessage should set all counts and wall status.", function() {
                 expect(a.wallConnected).toBe(false);
                 expect(a.connectedKiosks).toBe(0);
                 expect(a.connectedAdmins).toBe(0);
                 expect(a.connectedBoards).toBe(0);
-                a.applyData(requestAdminMeetingData());
+                a.initializeMessage(testData);
                 expect(a.wallConnected).toBe(true);
                 expect(a.connectedKiosks).toBe(1);
                 expect(a.connectedAdmins).toBe(1);

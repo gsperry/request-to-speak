@@ -8,7 +8,6 @@
         },
         activate: function() {
             router.map([
-                {route: "", title: "Welcome", moduleId: "viewmodels/welcome", nav: true},
                 {route: "request", moduleId: "viewmodels/request", nav: true},
                 {route: "meeting", moduleId: "viewmodels/meeting", nav: true}
             ]).buildNavigationModel();

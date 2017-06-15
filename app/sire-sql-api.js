@@ -2,87 +2,77 @@
 /* eslint no-console: "off" */
 
 // SQL Connection
-var sql = require("mssql");
-var logger = null;
-var pool = null;
+let sql = require("mssql");
+let logger = null;
+let pool = null;
 
 /**
  * initialize SQL connection.
  * @param {config} config
  */
 function setupSql(config) {
-    sql.connect(config).then(function(p) {
-        pool = p;
-    }).then(function(result) {
-        if(result) {
-            console.dir(result);
+    pool = new sql.ConnectionPool(config, function(err) {
+        if(err) {
+            logger.error(err);
+        } else {
+            logger.info("SIRE DB connected.");
         }
-    }).catch(function(err) {
-        // ... error checks
+    });
+    pool.on("error", function(err) {
         logger.error(err);
     });
-
-    sql.on("error", function(err) {
-        // ... error handler
-        console.log("On Error?: " + err);
-    });
 }
 
 /**
- * get list of future meetings from SIRE.
+ * get meetings from agenda management system
+ * @return {Promise}
  */
 function getMeetings() {
-    pool.connect();
+    return new Promise(function(fulfill, reject) {
+        let query = "SELECT meet.meet_id as sireId, meet.meet_type as meetingName, meet.meet_date as meetingDate " +
+        "FROM [sire].[alpha].[ans_meetings] meet " +
+        "WHERE meet_date > dateadd(DAY, -1, getdate()) " +
+        "ORDER by meetingDate asc";
+        logger.debug("Statement: " + query);
+        pool.request().query(query).then(function(result) {
+            logger.debug("Query result.", result.recordset);
+            fulfill(result.recordset);
+        }, function(err) {
+            logger.error("Query error: " + err);
+            reject(err);
+        });
+    });
 }
-// Query
-/*    var query = "SELECT TOP 10 meet.meet_id, meet.meet_type, meet.meet_date, item.item_id, item.caption, page.page_id, " +
-    "page.subdir, page.page_description, page.orig_extens, vault.vault_path FROM [sire].[alpha].[ans_meetings] " +
-    "meet INNER JOIN [alpha].[ans_meet_items] item ON item.meet_id = meet.meet_id INNER JOIN [alpha].[published_meetings_Page] " +
-    "page ON item.item_id = page.item_id INNER JOIN [sire].[alpha].[published_meetings_Doc] doc ON doc.meet_id = meet.meet_id " +
-    "INNER JOIN [alpha].[ans_vaults] vault ON vault.vault_id = doc.vault_id ORDER BY vault.vault_path, page.subdir";
-*/
-/*    new sql.Request().query(query).then(function(recordset) {
-        console.dir(recordset);
-    }).catch(function(err) {
-        console.log(err);
-    });
-*/
-    // Stored Procedure
-
-/*    new sql.Request()
-    .input('input_parameter', sql.Int, value)
-    .output('output_parameter', sql.VarChar(50))
-    .execute('procedure_name').then(function(recordsets) {
-        console.dir(recordsets);
-    }).catch(function(err) {
-        // ... execute error checks
-    });
-*/
-    // ES6 Tagged template literals (experimental)
-
-    // sql.query`select * from mytable where id = ${value}`.then(function(recordset) {
-    //     console.dir(recordset);
-    // }).catch(function(err) {
-    //     // ... query error checks
-    // });
 
 /**
- * Insert new request into database.
- * @param {Request} newMeeting
+ * Get all items for a specified meeting
+ * @param {string} meetingId
+ * @return {recordSet}
  */
-function insertMeeting(newMeeting) {
-    // Query
+function getItems(meetingId) {
+    return new Promise(function(fulfill, reject) {
+        let request = pool.request();
+        request.input("meetingId", meetingId);
 
-    //     return pool.request()
-    //     .input('input_parameter', sql.Int, value)
-    //     .query('select * from mytable where id = @input_parameter')
-    // }).then(result => {
-    // console.dir(recordset);
+        let query = "SELECT item.item_id as itemId, item.item_index as itemOrder, item.caption as itemName " +
+        "FROM [sire].[alpha].[ans_meetings] meet " +
+        "INNER JOIN [alpha].[ans_meet_items] item ON item.meet_id = meet.meet_id " +
+        "WHERE meet.meet_id = @meetingId";
+        logger.debug("MeetingId: " + meetingId);
+        logger.debug("Statement: " + query);
+        request.query(query).then(function(result) {
+            logger.debug("Query result.", result.recordset);
+            fulfill(result.recordset);
+        }, function(err) {
+            logger.error("Query error: " + err);
+            reject(err);
+        });
+    });
 }
 
-module.exports = function(cfg, logger) {
+module.exports = function(cfg, log) {
     // config is delivered frozen and this causes problems in mssql. So, just copy over.
-    var config = {
+    let config = {
         server: cfg.server,
         database: cfg.database,
         user: cfg.user,
@@ -90,14 +80,14 @@ module.exports = function(cfg, logger) {
         port: cfg.port
     };
 
-    this.logger = logger;
+    logger = log;
 
     setupSql(config);
 
     return {
         version: "1.0",
         dbType: "Microsoft SQL Server",
-        addMeeting: insertMeeting,
-        getMeetings: getMeetings
+        getMeetings: getMeetings,
+        getItems: getItems
     };
 };

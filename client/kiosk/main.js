@@ -8,7 +8,9 @@ requirejs.config({
         "knockout": "../lib/knockout/knockout-3.4.0",
         "bootstrap": "../lib/bootstrap/js/bootstrap",
         "jquery": "../lib/jquery/jquery-1.9.1",
-        "primus": "../primus/primus"
+        "primus": "../primus/primus",
+        "eventHandler": "../lib/rts/eventHandler",
+        "kioskDialog": "./viewmodels/dialog"
     },
     shim: {
         "bootstrap": {

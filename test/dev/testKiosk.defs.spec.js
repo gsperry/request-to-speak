@@ -3,13 +3,20 @@ define(["kiosk"], function(kiosk) {
     describe("Kiosk ViewModel definitions.", function() {
         "use strict";
 
-        //var a = require("kiosk");
+        // var a = require("kiosk");
         var a = kiosk;
 
         describe("Kiosk definitions.", function() {
-            it("should define activate as a Function", function() {
-                expect(a.activate).toBeDefined();
-                expect(a.activate).toEqual(jasmine.any(Function));
+            it("should define isConnected", function() {
+                expect(a.isConnected).toBeDefined();
+            });
+
+            it("should define isMeetingActive", function() {
+                expect(a.isMeetingActive).toBeDefined();
+            });
+
+            it("should define step", function() {
+                expect(a.step).toBeDefined();
             });
 
             it("should define request", function() {
@@ -20,26 +27,46 @@ define(["kiosk"], function(kiosk) {
                 expect(a.meeting).toBeDefined();
             });
 
+            it("should define selectedItem", function() {
+                expect(a.selectedItem).toBeDefined();
+                expect(a.selectedItem).toEqual(jasmine.any(Object));
+            });
+
             it("should define isSubmitting", function() {
                 expect(a.isSubmitting).toBeDefined();
             });
 
-            it("should define isMeetingActive", function() {
-                expect(a.isMeetingActive).toBeDefined();
+            it("should define confirmSubmission.", function() {
+                expect(a.confirmSubmission).toBeDefined();
             });
 
-            it("should define isKioskConnected", function() {
-                expect(a.isKioskConnected).toBeDefined();
+            it("should define messages as an Array", function() {
+                expect(a.messages).toBeDefined();
+                expect(a.messages).toEqual(jasmine.any(Array));
             });
 
-            it("should define applyMeetingData as a Function.", function() {
-                expect(a.applyMeetingData).toBeDefined();
-                expect(a.applyMeetingData).toEqual(jasmine.any(Function));
+            it("should define primus", function() {
+                expect(a.primus).toBeDefined();
             });
 
-            it("should define endMeeting as a Function.", function() {
-                expect(a.endMeeting).toBeDefined();
-                expect(a.endMeeting).toEqual(jasmine.any(Function));
+            it("should define attached as a Function", function() {
+                expect(a.attached).toBeDefined();
+                expect(a.attached).toEqual(jasmine.any(Function));
+            });
+
+            it("should define activate as a Function", function() {
+                expect(a.activate).toBeDefined();
+                expect(a.activate).toEqual(jasmine.any(Function));
+            });
+
+            it("should define meetingMessage as a Function.", function() {
+                expect(a.meetingMessage).toBeDefined();
+                expect(a.meetingMessage).toEqual(jasmine.any(Function));
+            });
+
+            it("should define initializeMessage as a Function.", function() {
+                expect(a.initializeMessage).toBeDefined();
+                expect(a.initializeMessage).toEqual(jasmine.any(Function));
             });
 
             it("should define submitRequest as a Function.", function() {
@@ -47,9 +74,19 @@ define(["kiosk"], function(kiosk) {
                 expect(a.submitRequest).toEqual(jasmine.any(Function));
             });
 
-            it("should define confirmSubmission as a Function.", function() {
-                expect(a.confirmSubmission).toBeDefined();
-                expect(a.confirmSubmission).toEqual(jasmine.any(Function));
+            it("should define nextStep as a Function.", function() {
+                expect(a.nextStep).toBeDefined();
+                expect(a.nextStep).toEqual(jasmine.any(Function));
+            });
+
+            it("should define prevStep as a Function.", function() {
+                expect(a.prevStep).toBeDefined();
+                expect(a.prevStep).toEqual(jasmine.any(Function));
+            });
+
+            it("should define submitRequest as a Function.", function() {
+                expect(a.submitRequest).toBeDefined();
+                expect(a.submitRequest).toEqual(jasmine.any(Function));
             });
 
             it("should define newRequest as a Function.", function() {

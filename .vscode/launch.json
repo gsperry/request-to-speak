@@ -3,11 +3,12 @@
     "compounds": [
         {
             "name": "Dev Serve",
-            "configurations": ["nodemon","Gulp BrowserSync", "Launch Kiosk", "Launch Admin"],
+            "configurations": ["nodemon","Gulp BrowserSync", "Launch Board", "Launch Admin"],
             "preLaunchTask": "eslint"
         }
     ],
     "configurations": [
+
         {
             "type": "node",
             "request": "launch",
@@ -22,6 +23,13 @@
             "type": "chrome",
             "request": "launch",
             "url": "http://localhost:7000/wall.html",
+            "webRoot": "${workspaceRoot}/client"
+        },
+        {
+            "name": "Launch Board",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:7000/board.html",
             "webRoot": "${workspaceRoot}/client"
         },
         {

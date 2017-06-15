@@ -1,16 +1,10 @@
 <section>
-    <div data-bind="visible: !isWallConnected">
+    <div data-bind="visible: !isConnected">
         <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
     </div>
     <div class="row" data-bind="foreach: requests">
-        <div class="col-sm-6 col-md-3">
-            <span href="#" data-bind="text: firstName">
-            </span>
-        </div>
-    </div>
-    <div class="row" data-bind="foreach: messages">
-        <div class="col-sm-6 col-md-3">
-            <span href="#" class="thumbnail" data-bind="text: message">
+        <div>
+            <span data-bind="text: firstName">
             </span>
         </div>
     </div>

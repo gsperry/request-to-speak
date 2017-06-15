@@ -1,50 +1,34 @@
 /* eslint no-console: "off" */
-define(["plugins/http", "durandal/app", "primus"], function(http, app, Primus) {
+define(["plugins/http", "durandal/app", "eventHandler"], function(http, app, Primus) {
     return {
+        isConnected: false,
+        isMeetingActive: false,
         requests: [],
-        primus: null,
         messages: [],
-        isWallConnected: false,
+        primus: null,
         activate: function() {
             // the router's activator calls this function and waits for it to complete before proceeding
-            this.primus = new Primus(location.href.replace(location.hash, "") + "?clientType=wall");
-
-            this.primus.on("open", function() {
-                console.log("Connection established.");
-                this.isWallConnected = true;
-            }.bind(this));
-            this.primus.on('reconnect timeout', function (err, opts) {
-                console.log('Timeout expired: %s', err.message);
-            }.bind(this));
-            this.primus.on('reconnect', function (err, opts) {
-                console.log('Reconnecting', err.message);
-                this.isWallConnected = false;
-            }.bind(this));
-            this.primus.on('reconnected', function (err, opts) {
-                console.log('Reconnecting', err.message);
-                this.isWallConnected = true;
-            }.bind(this));
-            this.primus.on("end", function() {
-                console.log("Connection ended.");
-                this.isWallConnected = false;
-            }.bind(this));
-            this.primus.on("data", function(data) {
-                console.log(data);
-
-                this.messages.push({message: "Message received: " + data.messageType});
-                switch(data.messageType) {
-                case "refresh":
-                    this.requests = data.message.requests;
-                    break;
-                case "initialize":
-                    this.requests = data.message.requests;
-                    break;
-                }
-            }.bind(this));
+            if(this.primus === null || this.primus.online !== true) {
+                event.setupPrimus(this, "wall");
+            }
         },
-        canDeactivate: function() {
-            // the router's activator calls this function to see if it can leave the screen
-            return app.showMessage("Are you sure you want to leave this page?", "Navigate", ["Yes", "No"]);
+        initializeMessage: function(message) {
+            if(message.meeting.meetingId !== undefined) {
+                this.isMeetingActive = true;
+            } else {
+                this.isMeetingActive = false;
+            }
+            this.requests = message.requests;
+        },
+        meetingMessage: function(message) {
+            if(message.event === "started") {
+                this.isMeetingActive = true;
+            } else {
+                this.isMeetingActive = false;
+            }
+        },
+        refreshMessage: function(message) {
+            this.requests = message.requests;
         }
     };
 });

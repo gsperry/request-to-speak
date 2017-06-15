@@ -1,12 +1,12 @@
 /* global module,require*/
 /* eslint prefer-spread: "off" */
-var logger = null;
-var meeting = {};
-var displayRequests = [];
-var wallSpark = null;
-var adminSparks = [];
-var kioskSparks = [];
-var boardSparks = [];
+let logger = null;
+let meeting = {};
+let displayRequests = [];
+let wallSpark = null;
+let adminSparks = [];
+let kioskSparks = [];
+let boardSparks = [];
 
 /**
  * Function to attach to Primus events
@@ -18,20 +18,45 @@ function setupPrimus(primus) {
             switch(spark.query.clientType) {
             case "kiosk":
                 kioskSparks.push(spark);
-                notify("admins", {"messageType": "device", "message": {"deviceType": "kiosk", "event": "connected", "count": kioskSparks.length}});
+                notify("admins", {
+                    "messageType": "device",
+                    "message": {
+                        "deviceType": "kiosk",
+                        "event": "connected",
+                        "count": kioskSparks.length
+                    }});
                 initializeKiosk(spark);
                 break;
             case "wall":
                 wallSpark = spark;
-                notify("admins", {"messageType": "device", "message": {"deviceType": "wall", "event": "connected"}});
+                notify("admins", {
+                    "messageType": "device",
+                    "message": {
+                        "deviceType": "wall",
+                        "event": "connected"
+                    }});
+                initializeWall(spark);
                 break;
             case "board":
                 boardSparks.push(spark);
-                notify("admins", {"messageType": "device", "message": {"deviceType": "board", "event": "connected", "count": boardSparks.length}});
+                notify("admins", {
+                    "messageType": "device",
+                    "message": {
+                        "deviceType": "board",
+                        "event": "connected",
+                        "count": boardSparks.length
+                    }});
+                initializeBoard(spark);
                 break;
             case "admin":
                 adminSparks.push(spark);
-                notify("admins", {"messageType": "device", "message": {"deviceType": "admin", "event": "connected", "count": adminSparks.length}});
+                notify("admins", {
+                    "messageType": "device",
+                    "message": {
+                        "deviceType": "admin",
+                        "event": "connected",
+                        "count": adminSparks.length
+                    }});
                 initializeAdmin(spark);
                 break;
             default:
@@ -47,6 +72,9 @@ function setupPrimus(primus) {
                 if(message == "ping") {
                     primus.write({reply: "pong"});
                 }
+            });
+            spark.on("heartbeat", function() {
+                logger.trace("Hearbeat.");
             });
         }
     });
@@ -65,19 +93,37 @@ function setupPrimus(primus) {
             adminSparks = adminSparks.filter(function(adminSpark) {
                 return adminSpark.id !== spark.id;
             });
-            notify("admins", {"messageType": "device", "message": {"deviceType": "admin", "event": "disconnected", "count": adminSparks.length}});
+            notify("admins", {
+                "messageType": "device",
+                "message": {
+                    "deviceType": "admin",
+                    "event": "disconnected",
+                    "count": adminSparks.length
+                }});
             break;
         case "kiosk":
             kioskSparks = kioskSparks.filter(function(kioskSpark) {
                 return kioskSpark.id !== spark.id;
             });
-            notify("admins", {"messageType": "device", "message": {"deviceType": "kiosk", "event": "disconnected", "count": kioskSparks.length}});
+            notify("admins", {
+                "messageType": "device",
+                "message": {
+                    "deviceType": "kiosk",
+                    "event": "disconnected",
+                    "count": kioskSparks.length
+                }});
             break;
         case "board":
             boardSparks = boardSparks.filter(function(boardSpark) {
                 return boardSpark.id !== spark.id;
             });
-            notify("admins", {"messageType": "device", "message": {"deviceType": "board", "event": "disconnected", "count": boardSparks.length}});
+            notify("admins", {
+                "messageType": "device",
+                "message": {
+                    "deviceType": "board",
+                    "event": "disconnected",
+                    "count": boardSparks.length
+                }});
             break;
         }
     });
@@ -89,9 +135,9 @@ function setupPrimus(primus) {
  * @param {Message} data - object to send to admin sparks.
  */
 function notify(group, data) {
-    var sparks = [];
+    let sparks = [];
     switch(group) {
-    case "wall": 
+    case "wall":
         sparks.push(wallSpark);
         break;
     case "kiosks" :
@@ -99,6 +145,9 @@ function notify(group, data) {
         break;
     case "admins":
         sparks = adminSparks;
+        break;
+    case "boards":
+        sparks = boardSparks;
         break;
     case "all":
         sparks.push.apply(sparks, kioskSparks);
@@ -123,6 +172,8 @@ function notify(group, data) {
  * @param {Spark} spark - newly connected admin spark.
  */
 function initializeAdmin(spark) {
+    logger.debug("Initializing admin.");
+
     spark.write({
         "messageType": "initialize",
         "message": {
@@ -140,6 +191,8 @@ function initializeAdmin(spark) {
  * @param {Spark} spark - newly connected kiosk spark.
  */
 function initializeKiosk(spark) {
+    logger.debug("Initializing kiosk.");
+
     spark.write({
         "messageType": "initialize",
         "message": {
@@ -148,47 +201,128 @@ function initializeKiosk(spark) {
     });
 }
 
+/**
+ * initialize wall state.
+ */
+function initializeWall() {
+    logger.debug("Initializing wall.");
+
+    notify("wall", {
+        "messageType": "initialize",
+        "mesage": {
+            "meeting": meeting,
+            "requests": displayRequests
+        }
+    });
+}
+
+/**
+ * @param {Spark} spark
+ * initialize board state.
+ */
+function initializeBoard(spark) {
+    logger.debug("Initializing board.");
+
+    spark.write({
+        "messageType": "initialize",
+        "message": {
+            "meeting": meeting
+        }
+    });
+}
+
 // Public functions
+
 /**
  * Adds a request to the live meeting.
  * @param {Request} request
+ * @return {Promise}
  */
 function addRequest(request) {
-    notify("watchers", {
-        "messageType": "request",
-        "message": {
-            "event": "add",
-            "request": request
-        }
+    logger.debug("Adding request.");
+
+    return new Promise(function(fulfill, reject) {
+        meeting.requests.push(request);
+        notify("watchers", {
+            "messageType": "request",
+            "message": {
+                "event": "add",
+                "request": request
+            }
+        });
+        fulfill();
+    });
+}
+
+/**
+ * Adds a request to the live meeting.
+ * @param {Request} request
+ * @return {Promise}
+ */
+function updateRequest(request) {
+    logger.debug("Updating request.");
+
+    return new Promise(function(fulfill, reject) {
+        let old = meeting.requests.findIndex(function(r) {
+            return r.requestId === request.requestId;
+        });
+        meeting.requests.splice(old, 1, request);
     });
 }
 
 /**
  * Starts a meeting by sending event to everyone.
  * @param {Meeting} newMeeting
+ * @return {Promise}
  */
 function startMeeting(newMeeting) {
-    meeting = newMeeting;
+    logger.debug("Starting meeting.");
+
+    return new Promise(function(fulfill, reject) {
+        meeting = newMeeting;
+
+        notify("all", {
+            "messageType": "meeting",
+            "message": {
+                "event": "started",
+                "meeting": meeting
+            }
+        });
+        fulfill();
+    });
+}
+
+/**
+ * Ends an active meeting by sending event to everyone.
+ */
+function endActiveMeeting() {
+    logger.debug("Ending active meeting.");
+
+    meeting = {};
 
     notify("all", {
         "messageType": "meeting",
         "message": {
-            "event": "started",
-            "meetingData": meeting
+            "event": "ended"
         }
     });
 }
 
 /**
  * Send updated list of requests to the wall
- * @param {array of requests} requests 
  */
-function refreshWall(requests) {
-    displayRequests = requests;
+function refreshWall() {
+    logger.debug("Refreshing wall.");
+
+    displayRequests = meeting.requests.filter(function(r) {
+        r.approvedForDisplay === true;
+    });
+
     notify("wall", {
         "messageType": "refresh",
         "mesage": {
-            "requests": requests
+            "meeting": meeting,
+            "requests": displayRequests
         }
     });
 }
@@ -201,7 +335,9 @@ module.exports = function(primus, log) {
     return {
         version: "1.0",
         addRequest: addRequest,
+        updateRequest: updateRequest,
         startMeeting: startMeeting,
+        endActiveMeeting: endActiveMeeting,
         refreshWall: refreshWall
     };
 };

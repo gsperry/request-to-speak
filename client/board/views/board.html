@@ -1,5 +1,15 @@
 <section>
-    <h2 data-bind="text: displayName"></h2>
+    <div>
+        <span>Total Remaining Time: </span><span data-bind="text: totalTimeRemaining"></span>
+    </div>
+    <div data-bind="foreach: requestList">
+        <span data-bind="text: itemName"></span>
+        <span data-bind="text: timeRemaining"> </span>
+        <div data-bind="foreach: requests">
+            <span data-bind="text: firstName"></span>
+            <span data-bind="text: lastName"></span>
+        </div>
+    </div>
     <div class="row" data-bind="foreach: messages">
         <div class="col-sm-6 col-md-3">
             <span href="#" class="thumbnail" data-bind="text: message">

@@ -18,7 +18,10 @@ module.exports = function (config) {
             'test/test-main.js',
             { pattern: 'test/**/*spec.js', included: false },
             { pattern: 'client/admin/viewmodels/*.js', included: false },
+            { pattern: 'client/admin/viewmodels/dialog/*.js', included: false },
+            { pattern: 'client/board/viewmodels/*.js', included: false },
             { pattern: 'client/kiosk/viewmodels/*.js', included: false },
+            { pattern: 'client/kiosk/viewmodels/dialog/*.js', included: false },
             { pattern: 'client/wall/viewmodels/*.js', included: false },
             { pattern: 'client/lib/**/*.js', included: false }
         ],
@@ -33,6 +36,8 @@ module.exports = function (config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             'client/admin/viewmodels/*.js': ['coverage'],
+            'client/admin/viewmodels/dialog/*.js': ['coverage'],
+            'client/board/viewmodels/*.js': ['coverage'],
             'client/kiosk/viewmodels/*.js': ['coverage'],
             'client/wall/viewmodels/*.js': ['coverage']
         },
@@ -41,15 +46,20 @@ module.exports = function (config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'coverage'],
+        reporters: ["progress", "junit", "coverage"],
 
-        coverageReporter: {
-            reporters: [
-                {type: "text"},
-                {type: "text-summary"},
-                {type: "html", dir: "coverage/"}
-            ]
+        junitReporter: {
+            outputDir: "coverage/junit/",
+            suite: 'models'
         },
+		coverageReporter: {
+			reporters: [
+                { type: "text" },
+                { type: "text-summary" },
+                { type: "clover", dir: "coverage/", subdir: "clover", file: "clover.xml" },
+                { type: "html", dir: "coverage/" }
+			]
+		},
 
         // web server port
         port: 9876,
@@ -70,7 +80,7 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['PhantomJS'],
+        browsers: ["PhantomJS"],
 
 
         // Continuous Integration mode

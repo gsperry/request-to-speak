@@ -1,17 +1,19 @@
 /* global process __dirname:true */
-var gulp = require("gulp");
-var requireDir = require("require-dir");
+let gulp = require("gulp");
+// var requireDir = require("require-dir");
 
-var paths = {
+let paths = {
     js: [
         "gulpfile.js",
         "index.js",
         "app/*.js",
         "client/*/main.js",
-        "client/*/viewmodels/*.js"
+        "client/*/viewmodels/*.js",
+        "client/*/viewmodels/dialog/*.js",
+        "test/**/*.js",
+        "client/lib/rts/*.js"
     ],
     app: [
-        "client/ping.html",
         "client/index.html",
         "client/chair.html",
         "client/kiosk.html",
@@ -26,9 +28,17 @@ var paths = {
 };
 
 // Require all tasks in the 'gulp' folder.
-requireDir("./gulp", {recurse: false});
+// requireDir("./gulp", {recurse: false});
 
-var eslint = require("gulp-eslint");
+let eslint = require("gulp-eslint");
+let reporter = require("eslint-bamboo-formatter");
+
+gulp.task("lint", function() {
+    return gulp.src(paths.js)
+        .pipe(eslint())
+        .pipe(eslint.format(reporter));
+});
+
 gulp.task("eslint", function() {
     gulp.src(paths.js)
         .pipe(eslint())
@@ -36,7 +46,7 @@ gulp.task("eslint", function() {
         .pipe(eslint.failAfterError());
 });
 
-var browserSync = require("browser-sync").create();
+let browserSync = require("browser-sync").create();
 gulp.task("browser-sync", function() {
     browserSync.init(null, {
         baseDir: "./client",
@@ -51,9 +61,9 @@ gulp.task("browser-sync", function() {
     gulp.watch(paths.app).on("change", browserSync.reload);
 });
 
-var nodemon = require("gulp-nodemon");
+let nodemon = require("gulp-nodemon");
 gulp.task("nodemon", function(cb) {
-    var started = false;
+    let started = false;
 
     nodemon({
         script: "index.js"
@@ -65,13 +75,13 @@ gulp.task("nodemon", function(cb) {
     });
 });
 
-var runSequence = require("run-sequence");
+let runSequence = require("run-sequence");
 gulp.task("serve", function(cb) {
     runSequence("eslint", "browser-sync", cb);
 });
 
 gulp.task("test", function(cb) {
-    var KarmaServer = require("karma").Server;
+    let KarmaServer = require("karma").Server;
     new KarmaServer({
         configFile: __dirname + "/karma.conf.js",
         singleRun: true
@@ -81,4 +91,4 @@ gulp.task("test", function(cb) {
     }).start();
 });
 
-gulp.task("default", ["browser-sync"]);
+gulp.task("default", ["nodemon", "browser-sync"]);

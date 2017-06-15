@@ -1,0 +1,12 @@
+<section>
+    <div data-bind="visible: !showSubTopics">
+        <div data-bind="foreach: items">
+            <span data-bind="text: itemName"></span>
+        </div>
+    </div>
+    <div data-bind="visible: showSubTopics">
+        <div data-bind="foreach: subTopics">
+            <span data-bind="text: $data"></span>
+        </div>
+    </div>
+</section>

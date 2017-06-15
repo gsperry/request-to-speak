@@ -1,7 +1,10 @@
 {
+    "plugins": ["jasmine", "node"],
     "env": {
         "browser": true,
-        "amd": true
+        "amd": true,
+        "jasmine": true,
+        "es6": true
     },
     "extends": [
         "eslint:recommended",
@@ -9,7 +12,7 @@
     ],
     "rules": {
         "no-var": [
-        "warn"
+        "off"
         ],
         "indent": [
             "error",

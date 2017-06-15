@@ -7,10 +7,21 @@
         <span><span>admins connected: </span><span data-bind="text: connectedAdmins"></span></span><br>
         <span><span>board views connected: </span><span data-bind="text: connectedBoards"></span></span><br>
     </div>
-    <div class="row" data-bind="foreach: requests">
-        <div class="col-sm-6 col-md-3">
-            <span data-bind="text: firstName">
-            </span>
+    <div>
+        <button data-bind="click: endMeeting, enable: isMeetingActive">End Meeting</button>
+    </div>
+    <div data-bind="with: meeting">
+        <div>
+            <span data-bind="text: meetingName"></span>
+        </div>
+        <div class="row" data-bind="foreach: requests">
+            <div class="col-sm-6 col-md-3">
+                <span data-bind="text: firstName">
+                </span>
+            </div>
+            <div>
+                <button data-bind="click: $root.editRequest">edit</button>
+            </div>
         </div>
     </div>
     <div class="row" data-bind="foreach: messages">
