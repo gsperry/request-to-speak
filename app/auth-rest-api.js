@@ -1,5 +1,4 @@
 /* global module,require*/
-// This module is dependent on a valid RTS DB API and WS API.
 let logger = null;
 let config = require("config");
 

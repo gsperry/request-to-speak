@@ -38,7 +38,7 @@ function addMeeting(meeting) {
 
         request.input("sireId", meeting.sireId || "");
         request.input("meetingName", meeting.meetingName);
-        request.input("meetingDate", sql.DateTime, new Date(meeting.meetingDate));
+        request.input("meetingDate", sql.DateTime, new Date(moment(meeting.meetingDate, "MMM Do YYYY").valueOf()));
         request.input("status", "new");
         request.output("id");
         request.execute("InsertMeeting").then(function(result) {

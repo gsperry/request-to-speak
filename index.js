@@ -56,7 +56,7 @@ if(config.get("rts.security.enabled") === true) {
     app.use(passport.initialize());
     app.use(passport.session());
     app.use("/", function(req, res, next) {
-        if (req.user == null && req.url !== "/login" && req.url !== "/login/callback") {
+        if (req.user == null && req.url !== "/login" && req.url !== "/postResponse") {
             res.redirect('/login');
         } else {
             next(); 
@@ -70,7 +70,7 @@ app.use("/", express.static(path.join(__dirname, "client")));
 let server = http.createServer(app);
 let primusConfig = config.get("rts.primus");
 let primus = new Primus(server, primusConfig);
-primus.save(__dirname +'/client/lib/primus.js');
+// primus.save(__dirname +'/client/lib/primus.js');
 
 server.listen(app.get("port"), function() {
     logger.info("Express server listening on port " + app.get("port"));
@@ -112,7 +112,7 @@ passport.authenticate(config.get("rts.security.passport.strategy"),
   })
 );
 
-app.post('/login/callback',
+app.post('/postResponse',
 passport.authenticate(config.get("rts.security.passport.strategy"), { failureRedirect: '/', failureFlash: true }),
     function(req, res) {
     res.redirect('/');
@@ -124,18 +124,18 @@ passport.authenticate(config.get("rts.security.passport.strategy"), { failureRed
  try {
     agenda = config.get("agenda");
  } catch(e) {
-    winston.info("No agenda system integration.");
+    logger.info("No agenda system integration.");
  }
  
 if(agenda) {
-    winston.info("Agenda integration found.");
+    logger.info("Agenda integration found.");
     let agendaApi = config.get("agenda.dbApi");
     let agendaConfig = config.get("agenda.dbConfig");
-    let agendaDbApi = require(agendaApi)(agendaConfig, winston);
-    winston.info("Agenda DB API Type: " + agendaDbApi.dbType);
-    winston.info("Agenda DB API Version: " + agendaDbApi.version);
+    let agendaDbApi = require(agendaApi)(logger, agendaConfig);
+    logger.info("Agenda DB API Type: " + agendaDbApi.dbType);
+    logger.info("Agenda DB API Version: " + agendaDbApi.version);
 
     let agendaRestApi = config.get("agenda.restApi");
-    winston.info("Agenda REST API: " + agendaRestApi);    
-    app.use("/agenda", require(agendaRestApi)(winston, agendaDbApi));
+    logger.info("Agenda REST API: " + agendaRestApi);    
+    app.use("/agenda", require(agendaRestApi)(logger, agendaDbApi));
 }

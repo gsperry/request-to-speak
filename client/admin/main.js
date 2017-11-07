@@ -35,7 +35,7 @@ define(["durandal/system", "durandal/app", "durandal/viewLocator", "bootstrap"],
     });
 
     app.apiLocation = location.href.replace(/[^/]*$/, "") + "api/";
-    app.agendaLocation = location.href.replace(/[^/]*$/, "") + "sire/";
+    app.agendaLocation = location.href.replace(/[^/]*$/, "") + "agenda/";
 
     $(document).ajaxError(function(jqXHR, status, errorThrown) {
         if(status.status === 302) {
