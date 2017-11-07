@@ -28,7 +28,9 @@ define(["primus"], function(Primus) {
             vm.primus.on("end", function() {
                 console.log("Connection ended.");
                 this.isConnected = false;
-                this.disconnected();
+                if(this.disconnected) {
+                    this.disconnected();
+                }
             }.bind(vm));
             vm.primus.on("data", function(data) {
                 console.log(data);

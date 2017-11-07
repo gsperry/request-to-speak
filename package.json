@@ -44,13 +44,18 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "config": "^1.25.1",
+    "cookie-parser": "^1.4.3",
     "errorhandler": "^1.5.0",
     "express": "^4.15.2",
+    "express-session": "^1.15.6",
     "faye-websocket": "^0.11.1",
     "http": "0.0.0",
     "lokijs": "^1.5.0",
+    "moment": "^2.19.1",
     "morgan": "^1.8.1",
     "mssql": "^4.0.1",
+    "passport": "^0.4.0",
+    "passport-saml": "^0.31.0",
     "path": "^0.12.7",
     "phantomjs-prebuilt": "^2.1.14",
     "primus": "^7.0.0",
@@ -58,6 +63,7 @@
     "solr-client": "^0.6.0",
     "uuid": "^3.0.1",
     "winston": "^2.3.1",
-    "winston-syslog": "^1.2.6"
+    "winston-syslog": "^1.2.6",
+    "xml2js": "^0.4.19"
   }
 }

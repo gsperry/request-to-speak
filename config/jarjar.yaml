@@ -1,0 +1,45 @@
+rts:
+    port: 3000
+    dbConfig:
+        server: crane.saccounty.net
+        database: RTS
+        user: sql-rtswebservice
+        port: 1433
+        password: stored locally
+    dbApi: ./app/rts-sql-api
+    log:
+        transports:
+            - name: console
+              options:
+                level: trace
+                colorize: true
+            - name: syslog
+              options:
+                level: debug
+                host: 10.94.190.187
+                port: 514
+                localhost: jarjar.saccounty.net
+                protocol: udp4
+                app_name: RTSDev
+    security:
+        enabled: true
+        component: ./app/rts-adfs
+        passport:
+            strategy: saml
+            saml:
+                path: /postResponse
+                entryPoint: https://zoltar.saccounty.net/adfs/ls
+                issuer: https://rtsdev.saccounty.net
+                callbackUrl: https://rtsdev.saccounty.net/postResponse
+                authnContext: urn:federation:authentication:windows
+                acceptedClockSkewMs: -1
+                signatureAlgorithm: sha256
+agenda:
+    restApi: ./app/sire-rest-api
+    dbApi: ./app/sire-sql-api
+    dbConfig:
+        server: heron.saccounty.net
+        database: SIRE
+        user: sql-rtswebservice
+        password: stored locally
+        port: 1433

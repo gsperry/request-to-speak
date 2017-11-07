@@ -11,9 +11,7 @@ function(app, observable, event, moment) {
         totalTimeRemaining: 0,
         primus: null,
         disconnected: function() {
-            app.showMessage("You are not authorized for this resource. Please login.").then(function() {
-                location.reload();                
-            });
+            location.reload();                
         },
         activate: function() {
             // the router's activator calls this function and waits for it to complete before proceeding

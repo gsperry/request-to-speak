@@ -8,9 +8,7 @@ define(["durandal/app", "eventHandler", "moment"], function(app, event, moment) 
         messages: [],
         primus: null,
         disconnected: function() {
-            app.showMessage("You are not authorized for this resource. Please login.").then(function() {
-                location.reload();                
-            });
+            location.reload();                
         },
         activate: function() {
             // the router's activator calls this function and waits for it to complete before proceeding
@@ -53,8 +51,10 @@ define(["durandal/app", "eventHandler", "moment"], function(app, event, moment) 
         this.displayRequests = this.requests.sort(function(a, b) {
             var aVal = (a.status === "active" ? "0" : "1");
             var bVal = (b.status === "active" ? "0" : "1");
-            aVal += ("0000" + ((parseInt(a.item.itemOrder) === 0) ? 1000 : parseInt(a.item.itemOrder)).toString()).slice(-4);
-            bVal += ("0000" + ((parseInt(b.item.itemOrder) === 0) ? 1000 : parseInt(b.item.itemOrder)).toString()).slice(-4);
+            aVal += ("0000" + ((parseInt(a.item.itemOrder) === 0) ?
+                1000 : parseInt(a.item.itemOrder)).toString()).slice(-4);
+            bVal += ("0000" + ((parseInt(b.item.itemOrder) === 0) ?
+                1000 : parseInt(b.item.itemOrder)).toString()).slice(-4);
             aVal += ((a.official) ? "0" : "1");
             bVal += ((b.official) ? "0" : "1");
             aVal += moment(a.dateAdded).valueOf().toString();

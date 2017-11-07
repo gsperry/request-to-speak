@@ -41,3 +41,6 @@ jspm_packages
 
 #LokiJS database files
 loki.json
+
+#certificates
+certs

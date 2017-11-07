@@ -13,9 +13,7 @@ function(http, app, observable, Items, event, $) {
         messages: [],
         primus: null,
         disconnected: function() {
-            app.showMessage("You are not authorized for this resource. Please login.").then(function() {
-                location.reload();                
-            });
+            location.reload();                
         },
         attached: function() {
         },

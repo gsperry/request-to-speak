@@ -2,11 +2,11 @@
 "use strict";
 let winston = require("winston");
 let config = require("config");
-let logTransports = config.get("RTS.log.transports");
+let logTransports = config.get("rts.log.transports");
 let logOptions = {
     transports: [],
-    levels: config.get("RTS.log.levels"),
-    level: config.get("RTS.log.level")
+    levels: config.get("rts.log.levels"),
+    level: config.get("rts.log.level")
 };
 logTransports.forEach(function(t) {
     switch(t.name) {
@@ -22,7 +22,7 @@ logTransports.forEach(function(t) {
 });
 
 let logger = new winston.Logger(logOptions);
-winston.addColors(config.get("RTS.log.colors"));
+winston.addColors(config.get("rts.log.colors"));
 
 // Sometimes things to awry.
 process.on("uncaughtException", function(err) {
@@ -31,33 +31,47 @@ process.on("uncaughtException", function(err) {
     process.exit(1);
 });
 
+// require middleware packages
 let express = require("express");
+let passport = require("passport");
 let favicon = require("serve-favicon");
+let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
 let http = require("http");
 let path = require("path");
-
 let app = express();
 let Primus = require("primus");
 
-let port;
-try {
-    port = config.get("RTS.port");
-} catch(e) {
-    logger.info("No port specified.");
+//setup app server
+app.set("port", config.get("rts.port"));
+app.use(favicon(__dirname + "/client/favicon.ico"));
+app.use(cookieParser("the quick brown fox"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
+//setup security if configured to do so
+if(config.get("rts.security.enabled") === true) {
+    require(config.get("rts.security.component"))(passport, config.get("rts.security.passport"));    
+    app.use(require('express-session')(config.get("rts.security.session")));
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use("/", function(req, res, next) {
+        if (req.user == null && req.url !== "/login" && req.url !== "/postResponse") {
+            req.session.returnTo = req.url;
+            res.redirect('/login');
+        } else {
+            next(); 
+        }
+    });
 }
 
-app.set("port", port || 3000);
-app.use(favicon(__dirname + "/client/favicon.ico"));
-app.use(bodyParser.json());-
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, "client")));
+// serve up client and apis
+app.use("/", express.static(path.join(__dirname, "client")));
 
 let server = http.createServer(app);
-let primusConfig = config.get("RTS.primus");
+let primusConfig = config.get("rts.primus");
 let primus = new Primus(server, primusConfig);
-
-primus.save(__dirname +'/client/lib/primus.js');
+// primus.save(__dirname +'/client/lib/primus.js');
 
 server.listen(app.get("port"), function() {
     logger.info("Express server listening on port " + app.get("port"));
@@ -66,8 +80,8 @@ server.listen(app.get("port"), function() {
 let rtsWsApi = require("./app/rts-ws-api")(primus, logger);
 logger.info("RTS WS API Version: " + rtsWsApi.version);
 
-let dbApi = config.get("RTS.dbApi");
-let dbConfig = config.get("RTS.dbConfig");
+let dbApi = config.get("rts.dbApi");
+let dbConfig = config.get("rts.dbConfig");
 
 // You can create your own API for Cassandra, Mongo, Oracle, etc. Just adhere to the interface.
 let rtsDbApi = require(dbApi)(dbConfig, logger);
@@ -91,45 +105,38 @@ rtsDbApi.init().then(function() {
 
 app.use("/api", require("./app/rts-rest-api")(logger, rtsDbApi, rtsWsApi));
 
-// Sacramento County agenda management system access.
-let agendaApi = config.get("SIRE.dbApi");
-let sireConfig = config.get("SIRE.dbConfig");
-let sireApi = require(agendaApi)(sireConfig, logger);
-app.get("/sire/meeting", function(req, res) {
-    logger.info("Retrieving meetings from agenda management system.");
-    sireApi.getMeetings().then(function(data) {
-        res.send(data);
-    }, function(err) {
-        res.status(500).send(err);
-    });
-});
+app.get('/login',
+passport.authenticate(config.get("rts.security.passport.strategy"),
+  {
+    successReturnToOrRedirect: true,
+    failureRedirect: '/login'
+  })
+);
 
-app.get("/sire/item/:meetingId", function(req, res) {
-    let meetingId = req.params.meetingId;
-    logger.info("Retrieving items from agenda management system for meetingId: " + meetingId);
-    sireApi.getItems(meetingId).then(function(data) {
-        res.send(data);
-    }, function(err) {
-        res.status(500).send(err);
-    });
-});
-
-// Sacramento County custom authorization via F5
-app.get("/auth/authorize", function(req, res) {
-    let userId = req.query.user;
-    if(!userId) {
-        res.status(400).send("Bad Request");
-    } else {
-        let users = config.get("AUTH.users");
-        let user = users.find(function(u) {
-            return u.user === userId;
-        });
-        if(user) {
-            res.status(200).send(JSON.stringify(user.groups));
-            logger.info("Authorized access: " + userId);
-        } else {
-            res.status(403).send("Forbidden");
-            logger.error("Attemtped unauthorized access: " + userId);
-        }
+app.post('/postResponse',
+passport.authenticate(config.get("rts.security.passport.strategy"), { failureRedirect: '/', successReturnToOrRedirect: true }),
+    function(req, res) {
+    // res.redirect('/');
     }
-});
+);
+
+ // External system integration.
+ let agenda;
+ try {
+    agenda = config.get("agenda");
+ } catch(e) {
+    logger.info("No agenda system integration.");
+ }
+ 
+if(agenda) {
+    logger.info("Agenda integration found.");
+    let agendaApi = config.get("agenda.dbApi");
+    let agendaConfig = config.get("agenda.dbConfig");
+    let agendaDbApi = require(agendaApi)(logger, agendaConfig);
+    logger.info("Agenda DB API Type: " + agendaDbApi.dbType);
+    logger.info("Agenda DB API Version: " + agendaDbApi.version);
+
+    let agendaRestApi = config.get("agenda.restApi");
+    logger.info("Agenda REST API: " + agendaRestApi);    
+    app.use("/agenda", require(agendaRestApi)(logger, agendaDbApi));
+}

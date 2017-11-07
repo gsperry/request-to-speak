@@ -4,6 +4,7 @@ function(http, router, app, Import, Edit, moment) {
     var ret = {
         displayName: "Meeting",
         activeMeeting: null,
+        canImport: false,
         meetings: [],
         activate: function() {
             var self = this;
@@ -19,6 +20,10 @@ function(http, router, app, Import, Edit, moment) {
                 }
             }, function(err) {
                 app.showMessage("Unable to connect to database.");
+            });
+            http.get(app.agendaLocation).then(function(response) {
+                self.canImport = true;
+            }, function(e) {
             });
         },
         startMeeting: function(meeting) {
@@ -115,13 +120,13 @@ function(http, router, app, Import, Edit, moment) {
     }.bind(ret);
 
     ret.format = function(date) {
-        var ret = moment(date).format("MMM Do YYYY");
+        var ret = moment(date).format("MMM Do YYYY"); 
         
-        //in case db api saves in our odd format:
-        if(ret === "Invalid date") {
-            ret = moment(date, "MMM Do YYYY").format("MMM Do YYYY");
-        }
-        return ret;
+       //in case db api saves in our odd format: 
+       if(ret === "Invalid date") { 
+           ret = moment(date, "MMM Do YYYY").format("MMM Do YYYY"); 
+       } 
+       return ret;
     };
 
     ret.editMeeting = function(meeting) {
