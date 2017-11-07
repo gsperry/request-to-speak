@@ -57,6 +57,7 @@ if(config.get("rts.security.enabled") === true) {
     app.use(passport.session());
     app.use("/", function(req, res, next) {
         if (req.user == null && req.url !== "/login" && req.url !== "/postResponse") {
+            req.session.returnTo = req.url;
             res.redirect('/login');
         } else {
             next(); 
@@ -107,15 +108,15 @@ app.use("/api", require("./app/rts-rest-api")(logger, rtsDbApi, rtsWsApi));
 app.get('/login',
 passport.authenticate(config.get("rts.security.passport.strategy"),
   {
-    successRedirect: '/',
+    successReturnToOrRedirect: true,
     failureRedirect: '/login'
   })
 );
 
 app.post('/postResponse',
-passport.authenticate(config.get("rts.security.passport.strategy"), { failureRedirect: '/', failureFlash: true }),
+passport.authenticate(config.get("rts.security.passport.strategy"), { failureRedirect: '/', successReturnToOrRedirect: true }),
     function(req, res) {
-    res.redirect('/');
+    // res.redirect('/');
     }
 );
 
