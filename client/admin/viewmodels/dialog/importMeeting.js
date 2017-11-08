@@ -21,8 +21,9 @@ define(["plugins/http", "plugins/dialog", "durandal/app", "moment"], function(ht
             this.selectedMeeting.sireId).then(function(data) {
                 self.selectedMeeting.items = data;
                 dialog.close(self, self.selectedMeeting);
-            }, function() {
-                // do error stuff
+            }, function(err) {
+                console.log(err);
+                app.showMessage("Error retrieving meeting items.");
             });
         };
     };

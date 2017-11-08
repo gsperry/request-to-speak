@@ -167,8 +167,6 @@ function updateMeeting(meetingId, meeting) {
     return new Promise(function(fulfill, reject) {
         let transaction = new sql.Transaction(pool);
         transaction.begin().then(function() {
-            // update meeting specific
-            // TODO
             // update items.
 
             const tvp = new sql.Table();
@@ -186,9 +184,11 @@ function updateMeeting(meetingId, meeting) {
 
             let request = new sql.Request(transaction);
             request.input("meetingId", meetingId);
+            request.input("meetingName", meeting.meetingName);
+            request.input("meetingDate", sql.DateTime, new Date(moment(meeting.meetingDate, "MMM Do YYYY").valueOf()));
             request.input("tvpItems", tvp);
             logger.debug("Calling UpdateItems");
-            request.execute("UpdateItems").then(function() {
+            request.execute("UpdateMeeting").then(function() {
                 transaction.commit().then(function(result) {
                     logger.debug("Update meeting status commit result.", result);
                     fulfill();
