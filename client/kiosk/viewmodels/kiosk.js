@@ -56,7 +56,7 @@ function(http, app, observable, Items, event, $) {
         submitRequest: function() {
             this.isSubmitting = true;
             var self = this;
-            http.post(location.href.replace(/[^/]*$/, "") + "api/request", this.request).then(function() {
+            http.post(app.apiLocation + "request", this.request).then(function() {
                 self.isSubmitting = false;
                 self.confirmSubmission = true;
                 setTimeout(function() {
@@ -117,7 +117,7 @@ function(http, app, observable, Items, event, $) {
         additionalRequest: function() {
             this.isSubmitting = true;
             var self = this;
-            http.post(location.href.replace(/[^/]*$/, "") + "api/request", this.request).then(function() {
+            http.post(app.apiLocation + "request", this.request).then(function() {
                 self.isSubmitting = false;
                 self.request.item = {};
                 self.request.offAgenda = false;
