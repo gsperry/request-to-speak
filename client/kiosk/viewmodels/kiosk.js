@@ -205,6 +205,8 @@ function(http, app, observable, Items, event, $) {
         case 3:
             // Notes required for Off Agenda requests.
             return (this.request.item.itemName !== "Off Agenda" || this.request.notes.length > 2);
+        case 5:
+            return app.enableReview;
         default:
             return true;
         }

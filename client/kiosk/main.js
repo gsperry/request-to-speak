@@ -33,6 +33,7 @@ define(["durandal/system", "durandal/app", "durandal/viewLocator", "bootstrap"],
         observable: true
     });
     
+    app.enableReview = false;
     app.apiLocation = location.href.replace(/[^/]*$/, "") + "api/";    
 
     $(document).ajaxError(function(jqXHR, status, errorThrown) {
