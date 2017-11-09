@@ -1,6 +1,6 @@
 /* eslint no-console: "off" */
-define(["plugins/http", "durandal/app", "plugins/dialog", "plugins/observable"],
-function(http, app, dialog, observable) {
+define(["plugins/http", "durandal/app", "plugins/dialog", "plugins/observable", "moment"],
+function(http, app, dialog, observable, moment) {
     var ctor = function() {
         this.activate = function(m) {
             this.meeting = m;
@@ -27,7 +27,16 @@ function(http, app, dialog, observable) {
             this.meeting.items.splice(this.meeting.items.indexOf(item), 1);
         }.bind(this);
         this.save = function() {
-            dialog.close(this, this.meeting);
+            var dt = moment(this.meeting.meetingDate).format("MMM Do YYYY"); 
+            if(dt === "Invalid date") { 
+                dt = moment(this.meeting.meetingDate, "MMM Do YYYY").format("MMM Do YYYY"); 
+            }       
+            if(dt === "Invalid date"){
+                app.showMessage("Meeting date is invalid.");
+            } else {
+                this.meeting.meetingDate = dt;
+                dialog.close(this, this.meeting);
+            }
         };
         observable.defineProperty(this, "orderedItems", function() {
             var items = this.meeting.items;

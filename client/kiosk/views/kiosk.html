@@ -71,10 +71,10 @@
 					</ol><!-- /fs-fields -->
 					
 					<div class="btns-top">
-						<button data-bind="click: submitRequest" class="fs-submit" type="button"><span class="btn-text">Submit</span> <i class="fa fa-2x fa-check"></i></button>
-						<button data-bind="click: cancelRequest" type="button" class="fs-submit" ><span class="btn-text"> Cancel</span> <i class="fa fa-2x fa-ban"></i></button>
+						<button data-bind="click: submitRequest, enable: !isSubmitting" class="fs-submit" type="button"><span class="btn-text">Submit</span> <i class="fa fa-2x fa-check"></i></button>
+						<button data-bind="click: cancelRequest, enable: !isSubmitting" type="button" class="fs-submit" ><span class="btn-text"> Cancel</span> <i class="fa fa-2x fa-ban"></i></button>
 
-						<button data-bind="click: additionalRequest" type="button" class="fs-submit" ><span class="btn-text"> Add Another</span> <i class="fa fa-2x fa-plus"></i></button>
+						<button data-bind="click: additionalRequest, enable: !isSubmitting" type="button" class="fs-submit" ><span class="btn-text"> Add Another</span> <i class="fa fa-2x fa-plus"></i></button>
 					</div>				
 					<div class="btns-start">
 						<button type="button" data-bind="click: prevStep,css: {hide: step === 6, fsStaleStart: step === 0}" class="fs-continue left">
@@ -86,9 +86,9 @@
 						</button>
 						
 						<span class="optionsBtns">
-							<button data-bind="click: submitRequest, css:{hide: step !== 5}" class="fs-continue" type="button"><span class="btn-text">Submit</span> <i class="fa fa-2x fa-check"></i></button>
-							<button data-bind="click: cancelRequest, css:{hide: step !== 5}" type="button" class="fs-continue" ><span class="btn-text"> Cancel</span> <i class="fa fa-2x fa-ban"></i></button>
-							<button data-bind="click: additionalRequest, css:{hide: step !== 5}" type="button" class="fs-continue" ><span class="btn-text"> Add Another</span> <i class="fa fa-2x fa-plus"></i></button>
+							<button data-bind="click: submitRequest, css:{hide: step !== 5}, enable: !isSubmitting" class="fs-continue" type="button"><span class="btn-text">Submit</span> <i class="fa fa-2x fa-check"></i></button>
+							<button data-bind="click: cancelRequest, css:{hide: step !== 5}, enable: !isSubmitting" type="button" class="fs-continue" ><span class="btn-text"> Cancel</span> <i class="fa fa-2x fa-ban"></i></button>
+							<button data-bind="click: additionalRequest, css:{hide: step !== 5}, enable: !isSubmitting" type="button" class="fs-continue" ><span class="btn-text"> Add Another</span> <i class="fa fa-2x fa-plus"></i></button>
 						</span>
 					</div>	
 				</form><!-- /fs-form -->

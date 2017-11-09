@@ -154,7 +154,7 @@ function(http, router, app, Import, Edit, moment) {
                 });
             }
         }, function(err) {
-            // Do error stuff
+            console.log(err);
         });
     }.bind(ret);
 

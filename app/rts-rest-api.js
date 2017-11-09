@@ -31,6 +31,11 @@ router.post("/request", function(req, res) {
     request.lastName = request.lastName.toUpperCase();
     request.agency = request.agency.toUpperCase();
     request.dateAdded = new Date();
+    if(request.official === "constituent") {
+        request.official = false;
+    } else if(request.official === "official") {
+        request.official = true;
+    }
 
     logger.trace("Add request with DbApi");
     rtsDbApi.addRequest(request).then(function(id) {

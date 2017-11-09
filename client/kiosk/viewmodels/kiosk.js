@@ -65,12 +65,12 @@ function(http, app, observable, Items, event, $) {
             this.isSubmitting = true;
             var self = this;
             http.post(app.apiLocation + "request", this.request).then(function() {
-                self.isSubmitting = false;
                 self.confirmSubmission = true;
                 setTimeout(function() {
                     self.confirmSubmission = false;
                     self.request = self.newRequest();
                     self.step = 0;
+                    self.isSubmitting = false;                    
                 }, 3000);
             }, function(err) {
                 self.isSubmitting = false;
@@ -126,13 +126,13 @@ function(http, app, observable, Items, event, $) {
             this.isSubmitting = true;
             var self = this;
             http.post(app.apiLocation + "request", this.request).then(function() {
-                self.isSubmitting = false;
                 self.request.item = {};
                 self.request.offAgenda = false;
                 self.request.subTopic = "";
                 self.request.stance = "";
                 self.request.notes = "";
                 self.step = 0;
+                self.isSubmitting = false;                
             }, function(err) {
                 self.isSubmitting = false;
                 // do error stuff
