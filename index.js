@@ -71,7 +71,7 @@ app.use("/", express.static(path.join(__dirname, "client")));
 let server = http.createServer(app);
 let primusConfig = config.get("rts.primus");
 let primus = new Primus(server, primusConfig);
-// primus.save(__dirname +'/client/lib/primus.js');
+// primus.save(__dirname +'/client/lib/primus/primus.js');
 
 server.listen(app.get("port"), function() {
     logger.info("Express server listening on port " + app.get("port"));

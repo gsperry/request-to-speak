@@ -38,10 +38,8 @@ define(["durandal/system", "durandal/app", "durandal/viewLocator", "bootstrap"],
     app.agendaLocation = location.href.replace(/[^/]*$/, "") + "agenda/";
 
     $(document).ajaxError(function(jqXHR, status, errorThrown) {
-        if(status.status === 302) {
-            app.showMessage("You are not authorized for this resource. Please login.").then(function() {
-                location.reload();
-            });
+        if(status.status === 0) {
+            location.reload();
         }
     });
     

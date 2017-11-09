@@ -24,6 +24,9 @@ define(["primus"], function(Primus) {
             vm.primus.on("reconnected", function(err, opts) {
                 console.log("Reconnected.", err.message);
                 this.isConnected = true;
+                if(this.reconnected) {
+                    this.reconnected();
+                }
             }.bind(vm));
             vm.primus.on("end", function() {
                 console.log("Connection ended.");

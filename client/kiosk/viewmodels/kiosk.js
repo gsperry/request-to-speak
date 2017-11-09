@@ -15,6 +15,14 @@ function(http, app, observable, Items, event, $) {
         disconnected: function() {
             location.reload();                
         },
+        reconnected: function() {
+            // make http call to check if auth session is dead.
+            http.get("/", function(data) {
+                console.log(data)
+            }, function(err) {
+                console.log(err);
+            });
+        },
         attached: function() {
         },
         deactivate: function() {
