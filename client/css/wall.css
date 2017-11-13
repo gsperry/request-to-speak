@@ -118,7 +118,7 @@ a:hover, a:focus {
 .itemOrder {
 	margin-bottom: 4px;
 	color: #d0d0d0;
-	padding-bottom: 9px;
+	padding-bottom: 10px;
 	background-color: #3A5067;
 	max-width: 120px;
 	text-align: center;
@@ -173,9 +173,9 @@ hr {
 	-moz-transition: all .5s ease-in-out;
 	-webkit-transition: all .5s ease-in-out;
 	transition: all .5s ease-in-out;
-	color: #ffffff;
-	background: rgba(255, 255, 255, .25);
-	border-bottom: 1px solid #545454;
+	color: #222;
+	background: rgba(78, 176, 23, 0.38);
+	/* border-bottom: 1px solid #545454; */
 }
 .nameRow {
 	background: none;
@@ -200,7 +200,7 @@ hr {
 	padding-bottom: 10px;
 	background-color: #3A5067;
 	border-bottom: 0.2em solid #c7c7c7;
-	height: 80px;
+	min-height: 80px;
 	margin-left: -15px;
 	padding-left: 20px;
 	margin-right: -15px;
