@@ -16,7 +16,7 @@ rts:
             - name: syslog
               options:
                 level: debug
-                host: 10.94.190.187
+                host: 192.168.8.80
                 port: 514
                 localhost: jarjar.saccounty.net
                 protocol: udp4

@@ -104,7 +104,12 @@ function(app, observable, event, moment) {
                     return f.requestId === toRemove.requestId;
                 }), 1);
             } else {
-                // problem!
+                var oldNew = this.newRequests.find(function(r) {
+                    return r.requestId === toRemove.requestId;
+                });
+                if(oldNew) {
+                    this.newRequests.splice(this.newRequests.indexOf(oldNew), 1);
+                }
             }
         }
         this.timeTotal();
@@ -132,9 +137,8 @@ function(app, observable, event, moment) {
                 var oldNew = this.newRequests.find(function(r) {
                     return r.requestId === updatedRequest.requestId;
                 });
-        
                 if(oldNew) {
-                    this.newRequests.splice(this.newRequests.indexOf(this.newRequests), 1, updatedRequest);
+                    this.newRequests.splice(this.newRequests.indexOf(oldNew), 1, updatedRequest);
                 }
             }
             this.timeTotal();
