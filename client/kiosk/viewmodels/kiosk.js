@@ -54,6 +54,7 @@ function(http, app, observable, Items, event, $) {
             if(message.meetingData.status === "started") {
                 this.isMeetingActive = true;
                 this.request = this.newRequest();
+                this.step = 0;
             } else {
                 this.isMeetingActive = false;
             }

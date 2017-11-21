@@ -100,6 +100,11 @@ function(app, observable, event, moment) {
                 return i.itemId === toRemove.item.itemId;
             });
             if(item) {
+                var itemRequest = item.requests.find(function(r){
+                    return r.requestId === requestId;
+                });
+            }
+            if(itemRequest) 
                 item.requests.splice(item.requests.findIndex(function(f) {
                     return f.requestId === toRemove.requestId;
                 }), 1);
