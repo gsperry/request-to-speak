@@ -10,12 +10,12 @@ let logOptions = {
 };
 logTransports.forEach(function(t) {
     switch(t.name) {
-    case "console": 
+    case "console":
         logOptions.transports.push(new winston.transports.Console(t.options));
         break;
     case "syslog":
-        require('winston-syslog').Syslog;
-        let sysTransport = new winston.transports.Syslog(t.options)
+        require("winston-syslog").Syslog;
+        let sysTransport = new winston.transports.Syslog(t.options);
         logOptions.transports.push(sysTransport);
         break;
     }
@@ -42,25 +42,25 @@ let path = require("path");
 let app = express();
 let Primus = require("primus");
 
-//setup app server
+// setup app server
 app.set("port", config.get("rts.port"));
 app.use(favicon(__dirname + "/client/favicon.ico"));
 app.use(cookieParser("the quick brown fox"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-//setup security if configured to do so
+// setup security if configured to do so
 if(config.get("rts.security.enabled") === true) {
-    require(config.get("rts.security.component"))(passport, config.get("rts.security.passport"));    
-    app.use(require('express-session')(config.get("rts.security.session")));
+    require(config.get("rts.security.component"))(passport, config.get("rts.security.passport"));
+    app.use(require("express-session")(config.get("rts.security.session")));
     app.use(passport.initialize());
     app.use(passport.session());
     app.use("/", function(req, res, next) {
         if (req.user == null && req.url !== "/login" && req.url !== "/postResponse") {
             req.session.returnTo = req.url;
-            res.redirect('/login');
+            res.redirect("/login");
         } else {
-            next(); 
+            next();
         }
     });
 }
@@ -105,29 +105,29 @@ rtsDbApi.init().then(function() {
 
 app.use("/api", require("./app/rts-rest-api")(logger, rtsDbApi, rtsWsApi));
 
-app.get('/login',
+app.get("/login",
 passport.authenticate(config.get("rts.security.passport.strategy"),
-  {
-    successReturnToOrRedirect: true,
-    failureRedirect: '/login'
-  })
+    {
+        successReturnToOrRedirect: true,
+        failureRedirect: "/login"
+    })
 );
 
-app.post('/postResponse',
-passport.authenticate(config.get("rts.security.passport.strategy"), { failureRedirect: '/', successReturnToOrRedirect: true }),
+app.post("/postResponse",
+passport.authenticate(config.get("rts.security.passport.strategy"), {failureRedirect: "/", successReturnToOrRedirect: true}),
     function(req, res) {
     // res.redirect('/');
     }
 );
 
  // External system integration.
- let agenda;
- try {
+let agenda;
+try {
     agenda = config.get("agenda");
- } catch(e) {
+} catch(e) {
     logger.info("No agenda system integration.");
- }
- 
+}
+
 if(agenda) {
     logger.info("Agenda integration found.");
     let agendaApi = config.get("agenda.dbApi");
@@ -137,6 +137,6 @@ if(agenda) {
     logger.info("Agenda DB API Version: " + agendaDbApi.version);
 
     let agendaRestApi = config.get("agenda.restApi");
-    logger.info("Agenda REST API: " + agendaRestApi);    
+    logger.info("Agenda REST API: " + agendaRestApi);
     app.use("/agenda", require(agendaRestApi)(logger, agendaDbApi));
 }

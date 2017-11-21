@@ -13,12 +13,12 @@ function(http, app, observable, Items, event, $) {
         messages: [],
         primus: null,
         disconnected: function() {
-            location.reload();                
+            location.reload();
         },
         reconnected: function() {
             // make http call to check if auth session is dead.
             http.get("/", function(data) {
-                console.log(data)
+                console.log(data);
             }, function(err) {
                 console.log(err);
             });
@@ -71,7 +71,7 @@ function(http, app, observable, Items, event, $) {
                     self.confirmSubmission = false;
                     self.request = self.newRequest();
                     self.step = 0;
-                    self.isSubmitting = false;                    
+                    self.isSubmitting = false;
                 }, 3000);
             }, function(err) {
                 self.isSubmitting = false;
@@ -133,7 +133,7 @@ function(http, app, observable, Items, event, $) {
                 self.request.stance = "";
                 self.request.notes = "";
                 self.step = 0;
-                self.isSubmitting = false;                
+                self.isSubmitting = false;
             }, function(err) {
                 self.isSubmitting = false;
                 // do error stuff

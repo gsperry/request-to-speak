@@ -6,7 +6,7 @@ let sireDbApi = null;
 // eslint-disable-next-line new-cap
 let router = require("express").Router();
 
-router.get("/", function (req, res) {
+router.get("/", function(req, res) {
     res.status(204).end();
 });
 

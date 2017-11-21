@@ -11,7 +11,7 @@ function(app, observable, event, moment) {
         totalTimeRemaining: 0,
         primus: null,
         disconnected: function() {
-            location.reload();                
+            location.reload();
         },
         activate: function() {
             // the router's activator calls this function and waits for it to complete before proceeding
@@ -100,11 +100,11 @@ function(app, observable, event, moment) {
                 return i.itemId === toRemove.item.itemId;
             });
             if(item) {
-                var itemRequest = item.requests.find(function(r){
+                var itemRequest = item.requests.find(function(r) {
                     return r.requestId === requestId;
                 });
             }
-            if(itemRequest) 
+            if(itemRequest) {
                 item.requests.splice(item.requests.findIndex(function(f) {
                     return f.requestId === toRemove.requestId;
                 }), 1);
@@ -127,10 +127,9 @@ function(app, observable, event, moment) {
 
         if(old) {
             this.requests.splice(this.requests.indexOf(old), 1, updatedRequest);
-            
             // remove removeRequests.
             var item = this.items.find(function(i) {
-                return i.itemId === ((updatedRequest.item.itemId) && (i.requests.indexOf(old) >= 0))
+                return i.itemId === ((updatedRequest.item.itemId) && (i.requests.indexOf(old) >= 0));
             });
 
             // TODO: what if change Item in edit.
@@ -148,7 +147,6 @@ function(app, observable, event, moment) {
             }
             this.timeTotal();
         }
-
     }.bind(ret);
 
     ret.timeTotal = function() {

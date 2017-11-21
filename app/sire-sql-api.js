@@ -52,12 +52,12 @@ function getMeetings() {
 function getItems(meetingId) {
     return new Promise(function(fulfill, reject) {
         let levelRequest = pool.request();
-        levelRequest.input("meetingId", meetingId);        
-        let levelQuery = "SELECT level_number FROM [sire].[alpha].[ans_meet_formats] f " + 
+        levelRequest.input("meetingId", meetingId);
+        let levelQuery = "SELECT level_number FROM [sire].[alpha].[ans_meet_formats] f " +
         "INNER JOIN alpha.ans_meet_types mt ON f.meet_type_id = mt.meet_type_id " +
-        "INNER JOIN [sire].[alpha].[ans_meetings] meet ON meet.meet_type = mt.meet_type " + 
+        "INNER JOIN [sire].[alpha].[ans_meetings] meet ON meet.meet_type = mt.meet_type " +
         "WHERE meet.meet_id = @meetingId " +
-        "AND f.format LIKE '%Numbering=\"Continuous\"%'"
+        "AND f.format LIKE '%Numbering=\"Continuous\"%'";
 
         levelRequest.query(levelQuery).then(function(levelResult) {
             let itemQuery;
@@ -87,12 +87,12 @@ function getItems(meetingId) {
                         ") SL on item.parent_id = SL.second_id";
                 } else if(depth === 2) {
                     itemQuery = "SELECT ROW_NUMBER() OVER(ORDER BY FL.first_order, item.item_index) as itemOrder, " +
-                    "item.item_id as itemId, item.caption as itemName, 3 as timeToSpeak " + 
-                    "FROM [sire].[alpha].[ans_meetings] meet " + 
+                    "item.item_id as itemId, item.caption as itemName, 3 as timeToSpeak " +
+                    "FROM [sire].[alpha].[ans_meetings] meet " +
                     "INNER JOIN [alpha].[ans_meet_items] item ON item.meet_id = meet.meet_id " +
                     "INNER JOIN (" +
                         "SELECT ROW_NUMBER() OVER(ORDER BY item.item_index) AS first_order, item.item_id as first_id " +
-                        "FROM [sire].[alpha].[ans_meetings] meet " + 
+                        "FROM [sire].[alpha].[ans_meetings] meet " +
                         "INNER JOIN [alpha].[ans_meet_items] item ON item.meet_id = meet.meet_id " +
                         "WHERE parent_id = 0 AND meet.meet_id = @meetingId " +
                         "GROUP BY  item.parent_id,item.item_index, item.caption, item.item_id,item.item_level " +

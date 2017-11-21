@@ -27,11 +27,11 @@ function(http, app, dialog, observable, moment) {
             this.meeting.items.splice(this.meeting.items.indexOf(item), 1);
         }.bind(this);
         this.save = function() {
-            var dt = moment(this.meeting.meetingDate).format("MMM Do YYYY"); 
-            if(dt === "Invalid date") { 
-                dt = moment(this.meeting.meetingDate, "MMM Do YYYY").format("MMM Do YYYY"); 
-            }       
-            if(dt === "Invalid date"){
+            var dt = moment(this.meeting.meetingDate).format("MMM Do YYYY");
+            if(dt === "Invalid date") {
+                dt = moment(this.meeting.meetingDate, "MMM Do YYYY").format("MMM Do YYYY");
+            }
+            if(dt === "Invalid date") {
                 app.showMessage("Meeting date is invalid.");
             } else {
                 this.meeting.meetingDate = dt;

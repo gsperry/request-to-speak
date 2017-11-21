@@ -356,7 +356,7 @@ function activateRequest(request) {
 
         if(oldDisplay) {
             displayRequests.splice(displayRequests.indexOf(oldDisplay), 1, request);
-    
+
             notify("wall", {
                 "messageType": "refresh",
                 "message": {
