@@ -743,9 +743,9 @@ button.fs-continue {
 
 button.fs-continue {
 	position: relative;
-	top: 8px;
+	top: 11px;
 	margin: 0 0px 0px 0;
-	font-size: .4em;
+	font-size: .3em;
 	padding: 10px 23px;
 	font-style: normal;
 	float: right;
