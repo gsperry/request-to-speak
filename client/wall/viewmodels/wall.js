@@ -118,7 +118,7 @@ define(["durandal/app", "eventHandler", "moment"], function (app, event, moment)
                             }
 
                             return parseInt(aVal) - parseInt(bVal);
-                        }).slice(0, 10);
+                        }).slice(0, 13);
                     }
 
                 });
@@ -147,7 +147,7 @@ define(["durandal/app", "eventHandler", "moment"], function (app, event, moment)
                             bVal += moment(b.dateAdded).valueOf().toString();
                         }
                         return parseInt(aVal) - parseInt(bVal);
-                    }).slice(0, 10);
+                    }).slice(0, 13);
                 }
             }
             else {

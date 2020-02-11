@@ -533,7 +533,8 @@ function getRequest(requestId) {
 function getRequests(meetingId) {
     return new Promise(function (fulfill, reject) {
         let request = pool.request();
-        let requestQuery = "SELECT requestId, item.itemOrder,SubItem.subItemOrder, item.itemName,SubItem.subItemName, dateAdded, firstName, lastName, " +
+        let requestQuery = "SELECT requestId, item.itemOrder,SubItem.subItemOrder, item.itemName,SubItem.subItemName,"+
+         "DATEADD(hh, DATEDIFF(hh, getutcdate(), getdate()), Request.dateAdded) as dateAdded, firstName, lastName, " +
         "case when official = 1 then 'Yes' else 'No' End as official, agency, offAgenda, subTopic, stance," +
         "case when Request.status = 'removed' then 'Yes' else 'No' End as concluded ," +
         "notes, phone, email, address, Request.timeToSpeak, " +
