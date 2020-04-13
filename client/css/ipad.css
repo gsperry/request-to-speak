@@ -313,7 +313,7 @@
 	top:-55px;
 	left:-7px
 }
-li.optional:after{
+/* li.optional:after{
 	content:'OPTIONAL';
 	padding:10px;
 	top: 8px;
@@ -325,7 +325,7 @@ li.optional:after{
 	line-height: 1.2em;
 	font-weight: bold;
 	color: #1c619b;
-}
+} */
 
 li.address{
   margin-top: 315px;
