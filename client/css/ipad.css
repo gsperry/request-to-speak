@@ -327,6 +327,14 @@ li.optional:after{
 	color: #1c619b;
 }
 
+li.address{
+  margin-top: 315px;
+}
+
+.paddingtop525{
+  margin-top: 525px !important;
+}
+
 .fs-fields input:invalid {
 	box-shadow: none; /* removes red shadow in FF*/
 }
@@ -1060,6 +1068,10 @@ margin: 10px;
 
 .padding-left-40{
   padding-left:40px !important;
+}
+
+.padding-top-540{
+  padding-top: 540px !important;
 }
 
 .agendaItems div.itemSelection .itemName:hover{
