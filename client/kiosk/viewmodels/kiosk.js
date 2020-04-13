@@ -1,5 +1,5 @@
 /* eslint no-console: "off" */
-define(["plugins/http", "durandal/app", "plugins/observable", "kioskDialog/items", "eventHandler", "jquery","knockout"],
+define(["plugins/http", "durandal/app", "plugins/observable", "kioskDialog/items", "eventHandler", "jquery", "knockout"],
     function (http, app, observable, Items, event, $, ko) {
         var ret = {
             isConnected: false,
@@ -12,8 +12,8 @@ define(["plugins/http", "durandal/app", "plugins/observable", "kioskDialog/items
             itemSelector: false,
             messages: [],
             primus: null,
-            displayItem : ko.observable(),
-            displaySubItem : ko.observable(),
+            displayItem: ko.observable(),
+            displaySubItem: ko.observable(),
             disconnected: function () {
                 location.reload();
             },
@@ -208,10 +208,16 @@ define(["plugins/http", "durandal/app", "plugins/observable", "kioskDialog/items
                 case 2:
                     return (stance !== "" && this.displayItem);
                 case 3:
+                    if (this.request.item.itemName !== "Off Agenda" || this.request.notes.length > 2) {
+                        app.enableReview;
+                        app.additionalRequest;
+                        
+                        return true;
+                    }
+                    else { return false; }
+
                     // Notes required for Off Agenda requests.
-                    return (this.request.item.itemName !== "Off Agenda" || this.request.notes.length > 2);
-                case 5:
-                    return app.enableReview;
+                    return;
                 default:
                     return true;
             }

@@ -14,7 +14,7 @@
 <body>
 	<div class="container">
 		<div class="fs-form-wrap" id="fs-form-wrap">
-			<form data-bind="css: {fsFormOverview: step === 6, fsFormFull: step !== 6}" id="myform" class="fs-form"
+			<form data-bind="css: {fsFormOverview: step === 4, fsFormFull: step !== 4}" id="myform" class="fs-form"
 				autocomplete="off">
 				<ol data-bind="with: request" class="fs-fields">
 					<li data-bind="css: {fsCurrent: $parent.step === 0, fsStaleStart: $parent.step !== 0}">
@@ -91,18 +91,21 @@
 							<span data-bind="text: $parent.notesCharsRemaining"></span> characters remaining
 						</div>
 					</li>
-					<li class="optional " data-bind="css: {fsCurrent: $parent.step === 4, fsStale: $parent.step !== 4}">
+					<li class="optional address"
+						data-bind="css: {fsCurrent: $parent.step === 3, fsStale: $parent.step !==3}">
 						<label for="q8"><span class="fs-field-label ">What's your home address?</span></label>
 						<input data-bind="value: address" class="optional" id="q8" name="q8" type="text"
 							placeholder="123 Main St., Sacramento, CA 95817" />
 					</li>
-					<li class="optional "
-						data-bind="css: {fsCurrent: $parent.step === 5,  fsStale: $parent.step !== 5}">
-						<label for="q2"><span class="fs-field-label ">What's your email and phone number?</span></label>
-						<input data-bind="value: email" id="q2" name="q2" type="email"
-							placeholder="your.email@email.com" />
-						<input data-bind="value: phone" class="optional" id="q9" name="q9" type="text"
-							placeholder="555-123-4567" />
+					<li class="optional" data-bind="css: {fsCurrent: $parent.step === 3,  fsStale: $parent.step !== 3, paddingtop525: $parent.step === 3}">
+						<!-- <div class="test"> -->
+							<label for="q2"><span class="fs-field-label ">What's your email and phone
+									number?</span></label>
+							<input data-bind="value: email" id="q2" name="q2" type="email"
+								placeholder="your.email@email.com" />
+							<input data-bind="value: phone" class="optional" id="q9" name="q9" type="text"
+								placeholder="555-123-4567" />
+						<!-- </div> -->
 					</li>
 				</ol><!-- /fs-fields -->
 
@@ -117,24 +120,24 @@
 							class="fa fa-2x fa-plus"></i></button>
 				</div>
 				<div class="btns-start">
-					<button type="button" data-bind="click: prevStep,css: {hide: step === 6, fsStaleStart: step === 0}"
+					<button type="button" data-bind="click: prevStep,css: {hide: step === 4, fsStaleStart: step === 0}"
 						class="fs-continue left">
 						<i class="fa fa-2x fa-angle-left"></i> <span class="btn-text-left">Last</span>
 					</button>
 
-					<button type="submit" data-bind="click: nextStep,css: {hide: step === 5}, enable: enableNext"
+					<button type="submit" data-bind="click: nextStep,css: {hide: step === 3}, enable: enableNext"
 						class="fs-continue progress-button">
 						<span class="btn-text ">Next</span> <i class="fa fa-2x fa-angle-right"></i>
 					</button>
 
 					<span class="optionsBtns">
-						<button data-bind="click: submitRequest, css:{hide: step !== 5}, enable: !isSubmitting"
+						<button data-bind="click: submitRequest, css:{hide: step !== 3}, enable: !isSubmitting"
 							class="fs-continue" type="button"><span class="btn-text">Submit</span> <i
 								class="fa fa-2x fa-check"></i></button>
-						<button data-bind="click: cancelRequest, css:{hide: step !== 5}, enable: !isSubmitting"
+						<button data-bind="click: cancelRequest, css:{hide: step !== 3}, enable: !isSubmitting"
 							type="button" class="fs-continue"><span class="btn-text"> Cancel</span> <i
 								class="fa fa-2x fa-ban"></i></button>
-						<button data-bind="click: additionalRequest, css:{hide: step !== 5}, enable: !isSubmitting"
+						<button data-bind="click: additionalRequest, css:{hide: step !== 3}, enable: !isSubmitting"
 							type="button" class="fs-continue"><span class="btn-text"> Add Another</span> <i
 								class="fa fa-2x fa-plus"></i></button>
 					</span>
@@ -186,7 +189,8 @@
 				<div data-bind="foreach: subItems">
 					<div class="itemSelection row padding-left-40">
 						<div class="itemNum col-md-1" data-bind="text: subItemOrder"></div>
-						<div class="itemName col-md-11" data-bind="text: subItemName, click: $root.selectSubItem($parent,$data)"></div>
+						<div class="itemName col-md-11"
+							data-bind="text: subItemName, click: $root.selectSubItem($parent,$data)"></div>
 					</div>
 				</div>
 			</div>
