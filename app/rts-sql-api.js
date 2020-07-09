@@ -34,6 +34,8 @@ function setupSql() {
  */
 function addMeeting(meeting) {
     return new Promise(function (fulfill, reject) {
+
+        logger.debug("Meeting object to add", meeting);
         let request = pool.request();
 
         request.input("sireId", meeting.sireId || "");
@@ -52,6 +54,7 @@ function addMeeting(meeting) {
                     p = p.then(function (ir) {
                         return itemRequest(meetingId, item, transaction);
                     }, function (err) {
+                        logger.debug("error", err);
                         transaction.rollback().then(function () {
                             reject(err);
                         }, function () {
