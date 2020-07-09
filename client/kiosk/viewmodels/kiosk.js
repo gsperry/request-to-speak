@@ -134,7 +134,7 @@ define(["plugins/http", "durandal/app", "plugins/observable", "kioskDialog/items
                 this.isSubmitting = true;
                 var self = this;
                 http.post(app.apiLocation + "request", this.request).then(function () {
-                    self.request.item = {};
+                  //  self.request.item = {};
                     self.request.offAgenda = false;
                     self.request.subTopic = "";
                     self.request.stance = "";
