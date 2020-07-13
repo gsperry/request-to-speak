@@ -40,7 +40,7 @@
         "phantomjs-prebuilt": "^2.1.14",
         "require-dir": "^0.3.1",
         "run-sequence": "^1.2.2",
-        "standard-version": "^8.0.0"
+        "standard-version": "^8.0.1"
     },
     "dependencies": {
         "body-parser": "^1.19.0",
