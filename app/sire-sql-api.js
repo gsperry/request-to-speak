@@ -60,7 +60,7 @@ function getItems(meetingId) {
             "on i.agendaitemnum = t.agendaitemnum " +
             "where i.tgttmeetingnum = @meetingId " +
             "and i.amnumber <> '' " +
-            "and i.sourceagendaitemnum <> 0 " +
+            "and i.sourceagendaitemnum is NULL " +
              "order by  CONVERT(bigint, REPLACE(i.amnumber,'.','')) ";
 
         let itemRequest = pool.request();
