@@ -33,7 +33,7 @@ function getMeetings() {
     return new Promise(function (fulfill, reject) {
         let query = "SELECT meet.ammeetingnum as sireId, meet.ammeetingname as meetingName, meet.ammeetingtime as meetingDate " +
             "FROM OnBase.hsi.ammeeting meet " +
-            "WHERE ammeetingtime > dateadd(DAY, -1, getdate()) " +
+            "WHERE CONVERT(date, ammeetingtime) >= CONVERT(date, getdate()) " +
             "ORDER by meet.ammeetingtime asc";
         logger.debug("Statement: " + query);
         pool.request().query(query).then(function (result) {
